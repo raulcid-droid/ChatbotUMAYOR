@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_mi_modelo_user,mi_modulo.mi_modelo user,model_mi_modulo_mi_modelo,,1,1,1,0
-access_mi_modelo_manager,mi_modulo.mi_modelo manager,model_mi_modulo_mi_modelo,base.group_system,1,1,1,1
-access_mi_modelo_line_user,mi_modulo.mi_modelo_line user,model_mi_modulo_mi_modelo_line,,1,1,1,0
-access_mi_modelo_line_manager,mi_modulo.mi_modelo_line manager,model_mi_modulo_mi_modelo_line,base.group_system,1,1,1,1
