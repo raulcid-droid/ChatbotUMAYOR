@@ -1,6 +1,6 @@
 # API `chat_umayor` — contrato backend ↔ frontend
 
-- **Versión**: `v0` (draft · propuesta unilateral del backend).
+- **Versión**: `v0.1` (draft · propuesta unilateral del backend).
 - **Estado**: pendiente de validación con la compañera de UI.
 - **Fecha**: 2026-05-02.
 - **Fuente de verdad**: este documento. Cualquier cambio en endpoints se
@@ -16,22 +16,52 @@
 ## 1. Convenciones
 
 ### Transporte
-- **REST plano** sobre `http.Controller` de Odoo con `type='json'`.
+- **JSON-RPC 2.0 nativo de Odoo** sobre `http.Controller` con `type='json'`.
+  Es el patrón idíomatico en Odoo 19 y el widget OWL de UI puede usar el
+  cliente `rpc` de Odoo sin código extra.
 - Todos los endpoints aceptan y devuelven **JSON UTF-8**.
-- Método: **`POST`** en todos (incluso los que "parecen" GET, para homogeneidad y evitar caching).
+- Método: **`POST`** siempre (obligatorio para `type='json'`).
 - Base URL: raíz del website Odoo. Prefijo fijo **`/chat_umayor/`**
   (alineado con §6 de `AGENTS.md`).
+
+### Envoltorio JSON-RPC
+
+La UI **no** envía directamente los payloads documentados abajo: los
+envuelve en la estructura JSON-RPC que Odoo espera.
+
+**Request** (lo que sale del cliente):
+```json
+{
+  "jsonrpc": "2.0",
+  "method": "call",
+  "params": { ... payload documentado en §4 ... },
+  "id": 1
+}
+```
+
+**Response exitosa** (lo que recibe el cliente):
+```json
+{
+  "jsonrpc": "2.0",
+  "id": 1,
+  "result": { ... shape `{ok, data|error}` documentado abajo ... }
+}
+```
+
+En el resto del documento, cuando digo "request" o "response" me refiero
+al contenido de `params` y de `result` respectivamente. La UI usa
+`fetch` con `Content-Type: application/json` o, preferiblemente, el
+helper `rpc` de `@web/core/network/rpc`.
 
 ### Autenticación
 - `auth='public'` en los 4 endpoints (el chatbot atiende visitantes anónimos).
 - La identidad de la conversación se lleva por **`session_id` en la URL**,
   no por cookie. Es el id de un registro `chatbot.session` en BD.
-- CSRF: `csrf=False` por ser endpoints JSON consumidos desde el widget OWL
-  del mismo origen. **TBD**: revisar si Odoo 19 requiere token adicional
-  para endpoints públicos JSON (confirmar al implementar PLAN 07).
+- CSRF: gestionado por Odoo automáticamente en `type='json'` (no hace
+  falta `csrf=False` ni tokens manuales). Esto resuelve el TBD §5.1 de `v0`.
 
-### Formato de respuesta
-Todas las respuestas tienen esta forma:
+### Formato de `result` (shape de negocio)
+Dentro del `result` del JSON-RPC usamos siempre este shape:
 
 **Éxito**:
 ```json
@@ -41,7 +71,7 @@ Todas las respuestas tienen esta forma:
 }
 ```
 
-**Error**:
+**Error de negocio** (la llamada JSON-RPC fue OK pero la operación falló):
 ```json
 {
   "ok": false,
@@ -56,10 +86,13 @@ El mensaje de `error.message` está en **español** y es apto para mostrar
 al usuario final. Nunca contiene tracebacks, nombres de tabla, ni
 detalles de infraestructura (regla §7 de `AGENTS.md`).
 
-### Códigos HTTP
-- `200 OK` en éxito **y** en errores de negocio (la distinción va en `ok`).
-- `400 Bad Request` solo si el JSON de entrada es malformado o faltan campos requeridos.
-- `500 Internal Server Error` solo ante excepción no controlada (se logea; el cliente ve genérico).
+### Errores de protocolo vs. errores de negocio
+- **Errores de negocio** (validación, estado inválido, LLM caído, etc.)
+  → HTTP 200, JSON-RPC `result` con `{"ok": false, "error": {...}}`.
+- **Errores de protocolo** (excepción Python no controlada) → JSON-RPC
+  devuelve `{"error": {...}}` en lugar de `result`. La UI debe tratarlo
+  como `INTERNAL_ERROR` y mostrar mensaje genérico al usuario.
+- **JSON malformado** → HTTP 400 gestionado por Odoo.
 
 ### Timestamps
 ISO-8601 con offset, ej. `"2026-05-02T14:23:11+00:00"`.
@@ -289,17 +322,20 @@ Lanza el flujo de firma con Odoo Sign. Requiere `state='review'` (o `signing` si
 
 ## 5. TBD / preguntas abiertas
 
-1. **CSRF en JSON públicos**: confirmar política de Odoo 19 al implementar PLAN 07.
+1. ~~**CSRF en JSON públicos**~~ → resuelto en `v0.1`: Odoo lo gestiona en `type='json'`.
 2. **Formato de `document_id`**: depende de qué país se use para SOAP (AGENTS §1 dice "confirmar con el profesor"). Por ahora aceptamos string libre y validamos en backend.
 3. **Polling de estado post-firma**: ¿endpoint dedicado `GET /state` o incluir el estado de firma en la próxima respuesta de `/message`?
-4. **Rate limiting**: no contemplado en `v0`. Ante abuso del endpoint `/message`, el wrapper de Gemini ya tiene backoff (§7 AGENTS) pero no hay protección por IP.
-5. **I18n de `error.message`**: en `v0` solo español. Si UI quisiera otros idiomas, agregar `Accept-Language` y `.po`.
+4. **Rate limiting**: no contemplado en `v0.1`. Ante abuso del endpoint `/message`, el wrapper de Gemini ya tiene backoff (§7 AGENTS) pero no hay protección por IP.
+5. **I18n de `error.message`**: en `v0.1` solo español. Si UI quisiera otros idiomas, agregar `Accept-Language` y `.po`.
 6. **Campos de SOAP**: confirmar con profesor qué datos vehiculares son obligatorios.
 
 ---
 
 ## 6. Changelog
 
+- **v0.1** (2026-05-02): aclara transporte como JSON-RPC 2.0 nativo de
+  Odoo (no REST plano). Documenta envoltorio `params`/`result`. Cierra
+  TBD de CSRF.
 - **v0** (2026-05-02): primer draft tras PLAN 02. Sin implementación aún.
 
-<!-- v0 · 2026-05-02 · draft inicial, sin código todavía -->
+<!-- v0.1 · 2026-05-02 · transporte clarificado: JSON-RPC Odoo nativo -->
