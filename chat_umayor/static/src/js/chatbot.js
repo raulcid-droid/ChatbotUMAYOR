@@ -1,5 +1,6 @@
 /** @odoo-module **/
-import { Component, useState, useRef, useEffect, mount, whenReady } from "@odoo/owl";
+import { Component, useState, useRef, useEffect } from "@odoo/owl";
+import { registry } from "@web/core/registry";
 
 class ChatBot extends Component {
     static template = "chat_umayor.ChatBot";
@@ -68,8 +69,7 @@ class ChatBot extends Component {
     }
 }
 
-whenReady(() => {
-    const container = document.createElement("div");
-    document.body.appendChild(container);
-    mount(ChatBot, container);
+registry.category("public_root_widgets").add("chat_umayor.ChatBot", {
+    Component: ChatBot,
+    selector: "body",
 });
