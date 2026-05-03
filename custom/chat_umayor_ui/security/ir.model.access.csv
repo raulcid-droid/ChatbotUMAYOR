@@ -1,8 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_chat_umayor_session_user,chat.umayor.session user,model_chat_umayor_session,base.group_user,1,1,1,1
-access_chat_umayor_session_public,chat.umayor.session public,model_chat_umayor_session,base.group_public,0,0,0,0
-access_chat_umayor_session_portal,chat.umayor.session portal,model_chat_umayor_session,base.group_portal,1,0,0,0
-access_chat_umayor_message_user,chat.umayor.message user,model_chat_umayor_message,base.group_user,1,1,1,1
-access_chat_umayor_message_public,chat.umayor.message public,model_chat_umayor_message,base.group_public,0,0,0,0
-access_chat_umayor_product_user,chat.umayor.product user,model_chat_umayor_product,base.group_user,1,1,1,1
-access_chat_umayor_product_public,chat.umayor.product public,model_chat_umayor_product,base.group_public,1,0,0,0
