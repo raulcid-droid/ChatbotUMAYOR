@@ -28,6 +28,7 @@ class ChatBot extends Component {
             () => [this.state.messages.length, this.state.isLoading]
         );
     }
+    
 
     toggleChat() {
         this.state.isOpen = !this.state.isOpen;
