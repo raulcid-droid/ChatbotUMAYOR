@@ -17,7 +17,7 @@ MODULE_VERSION = "19.0.1.0.0"
 class ChatUmayorController(Controller):
     """Endpoints HTTP públicos del chatbot bancario."""
 
-    @route("/chat_umayor/ping", type="json", auth="public", methods=["POST"])
+    @route("/chat_umayor/ping", type="jsonrpc", auth="public", methods=["POST"])
     def ping(self) -> dict:
         """Smoke check del módulo.
 
