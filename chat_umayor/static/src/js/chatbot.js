@@ -8,9 +8,9 @@
             <div class="chatbot-window" id="chatbot-window" style="display:none">
                 <div class="chatbot-header">
                     <div class="chatbot-header-info">
-                        <div class="chatbot-avatar">RRJ</div>
+                        <div class="chatbot-avatar">UM</div>
                         <div>
-                            <div class="chatbot-header-name">Asistente Virtual</div>
+                            <div class="chatbot-header-name">Chatbot UMayor</div>
                             <div class="chatbot-header-status">En línea</div>
                         </div>
                     </div>
@@ -42,7 +42,7 @@
         const send    = container.querySelector("#chatbot-send");
         const msgs    = container.querySelector("#chatbot-messages");
 
-        addMessage("¡Hola! Soy el asistente virtual del Banco RRJ. ¿En qué puedo ayudarte hoy?", "bot");
+        addMessage("¡Hola! Soy el asistente virtual de UMayor. ¿En qué puedo ayudarte hoy?", "bot");
 
         fab.addEventListener("click", () => toggle(true));
         close.addEventListener("click", () => toggle(false));
