@@ -2,23 +2,11 @@
 /* =========================================================================
  * chatbot_extras.js
  * -------------------------------------------------------------------------
- * Aporte de Romina Beca al módulo chat_umayor.
- *
- * Este archivo NO toca el widget original (chatbot.js de Raúl).
- * En su lugar, lo OBSERVA y le AGREGA tres capacidades nuevas que no
- * existían y que están definidas en docs/api.md:
- *
  *   1. Chips de sugerencias (campo `suggestions` del backend).
  *   2. Formulario de captura de datos (estado `data_collection`).
  *   3. Botón de firma de contrato (estado `review` -> `signing`).
  *
- * Además, cuando el backend de Jonathan aún no está implementado,
- * activa un MODO DEMO que simula respuestas siguiendo el mismo
- * contrato de la API. Eso permite presentar el flujo completo
- * sin depender del backend.
- *
- * Autora: Romina Beca
- * Cubre puntos 3 (UI) y 4 (Sign) del informe sumativo.
+
  * ========================================================================= */
 
 (function () {
@@ -293,6 +281,27 @@
       ev.preventDefault();
       await submitDataForm(form, productCode);
     });
+
+    // Auto-formato del RUT mientras el usuario escribe.
+    // Le quita errores visuales si los corrige y le da formato bonito.
+    const rutField = form.querySelector('input[name="document_id"]');
+    if (rutField) {
+      rutField.addEventListener("input", () => {
+        rutField.classList.remove("cu-input-error");
+      });
+      rutField.addEventListener("blur", () => {
+        // Al salir del campo, intentamos formatearlo si es válido
+        const result = validateRut(rutField.value);
+        if (result.valid) {
+          // Damos formato con puntos: 12.345.678-9
+          const body = result.clean.slice(0, -1);
+          const dv = result.clean.slice(-1);
+          const bodyFormatted = body.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+          rutField.value = `${bodyFormatted}-${dv}`;
+        }
+      });
+    }
+
     msgsEl.appendChild(form);
     msgsEl.scrollTop = msgsEl.scrollHeight;
   }
@@ -303,11 +312,30 @@
     errBox.textContent = "";
 
     const data = new FormData(form);
+
+    // ===== Validación de RUT chileno (algoritmo módulo 11) =====
+    // Si el RUT no es válido, no enviamos nada y mostramos el error
+    // sin perder lo que el usuario ya escribió.
+    const rutRaw = data.get("document_id");
+    const rutValidation = validateRut(rutRaw);
+    if (!rutValidation.valid) {
+      errBox.textContent = rutValidation.message;
+      errBox.style.display = "block";
+      const rutInput = form.querySelector('input[name="document_id"]');
+      if (rutInput) {
+        rutInput.focus();
+        rutInput.classList.add("cu-input-error");
+      }
+      return;
+    }
+    // Normalizamos el RUT al formato estándar (sin puntos, con guión)
+    const rutFormatted = rutValidation.formatted;
+
     const payload = {
       product_code: productCode || "soap",
       partner: {
         name: data.get("name"),
-        document_id: data.get("document_id"),
+        document_id: rutFormatted,
         email: data.get("email"),
         phone: data.get("phone") || "",
       },
@@ -544,6 +572,95 @@
   }
 
   // ---------------------------------------------------------------
+  // Validación de RUT chileno (algoritmo módulo 11)
+  // ---------------------------------------------------------------
+  /**
+   * Valida un RUT chileno usando el algoritmo módulo 11.
+   *
+   * Acepta formatos comunes: "12.345.678-9", "12345678-9",
+   * "123456789", "12345678-K". No es sensible a mayúsculas en la K.
+   *
+   * Retorna:
+   *   { valid: true,  formatted: "12345678-9", clean: "123456789" }
+   *   { valid: false, message: "..." }
+   *
+   * El algoritmo módulo 11:
+   *   1. Tomar los dígitos del cuerpo (sin DV) de derecha a izquierda.
+   *   2. Multiplicar cada uno por la serie 2,3,4,5,6,7,2,3,4,5,6,7...
+   *   3. Sumar todos los productos.
+   *   4. Calcular: 11 - (suma % 11).
+   *   5. Si el resultado es 11 -> DV = "0".
+   *      Si el resultado es 10 -> DV = "K".
+   *      En otro caso         -> DV = el número como string.
+   *   6. Comparar con el DV ingresado por el usuario.
+   */
+  function validateRut(rutInput) {
+    if (!rutInput || typeof rutInput !== "string") {
+      return { valid: false, message: "Ingresa un RUT." };
+    }
+
+    // Limpiamos: quitamos puntos, guiones y espacios; pasamos a mayúsculas
+    const clean = rutInput.replace(/[.\-\s]/g, "").toUpperCase();
+
+    // Mínimo 2 caracteres (1 dígito + DV) y máximo 9 (8 + DV)
+    if (clean.length < 7 || clean.length > 9) {
+      return {
+        valid: false,
+        message: "El RUT debe tener entre 7 y 9 caracteres.",
+      };
+    }
+
+    // Separamos cuerpo y dígito verificador
+    const body = clean.slice(0, -1);
+    const dv = clean.slice(-1);
+
+    // El cuerpo debe ser solo números
+    if (!/^\d+$/.test(body)) {
+      return {
+        valid: false,
+        message: "El RUT solo puede contener números (excepto la K).",
+      };
+    }
+    // El DV debe ser 0-9 o K
+    if (!/^[0-9K]$/.test(dv)) {
+      return {
+        valid: false,
+        message: "El dígito verificador debe ser un número o K.",
+      };
+    }
+
+    // ---- Cálculo del DV esperado (algoritmo módulo 11) ----
+    let suma = 0;
+    let multiplicador = 2;
+    // Recorremos el cuerpo de derecha a izquierda
+    for (let i = body.length - 1; i >= 0; i--) {
+      suma += parseInt(body[i], 10) * multiplicador;
+      multiplicador = multiplicador === 7 ? 2 : multiplicador + 1;
+    }
+    const resto = 11 - (suma % 11);
+
+    let dvEsperado;
+    if (resto === 11) dvEsperado = "0";
+    else if (resto === 10) dvEsperado = "K";
+    else dvEsperado = String(resto);
+
+    if (dv !== dvEsperado) {
+      return {
+        valid: false,
+        message:
+          "El RUT ingresado no es válido. Verifica el dígito verificador.",
+      };
+    }
+
+    // Formato canónico: cuerpo-DV (sin puntos), ej: "12345678-9"
+    return {
+      valid: true,
+      clean: clean,
+      formatted: `${body}-${dv}`,
+    };
+  }
+
+  // ---------------------------------------------------------------
   // Helpers DOM
   // ---------------------------------------------------------------
   function appendMessage(text, from) {
@@ -621,5 +738,6 @@
     clearMetrics: () => {
       window.__chatbotMetrics = [];
     },
+    validateRut: validateRut, // expuesta para testing
   };
 })();
