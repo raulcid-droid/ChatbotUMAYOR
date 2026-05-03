@@ -11,7 +11,7 @@ Define las rutas públicas que consume el widget JavaScript:
   POST /chat/api/sign_request -> dispara una solicitud de firma con Odoo Sign
 
 Diseño:
-- Las rutas /api/* son `type='json'` para que el JS pueda hacer fetch
+- Las rutas /api/* son `type='jsonrpc'` para que el JS pueda hacer fetch
   con JSON puro y evitar problemas de CSRF.
 - `auth='public'` permite que visitantes anónimos usen el bot.
 - La respuesta del bot se delega al modelo de lógica (módulo del
@@ -39,7 +39,7 @@ class ChatUMayorController(http.Controller):
     # -----------------------------------------------------------------
     # API: iniciar sesión
     # -----------------------------------------------------------------
-    @http.route('/chat/api/start', type='json', auth='public', csrf=False)
+    @http.route('/chat/api/start', type='jsonrpc', auth='public', csrf=False)
     def api_start(self, **kwargs):
         """Crea una sesión nueva y devuelve su token al frontend."""
         session = request.env['chat.umayor.session'].sudo().create({
@@ -62,7 +62,7 @@ class ChatUMayorController(http.Controller):
     # -----------------------------------------------------------------
     # API: enviar mensaje
     # -----------------------------------------------------------------
-    @http.route('/chat/api/send', type='json', auth='public', csrf=False)
+    @http.route('/chat/api/send', type='jsonrpc', auth='public', csrf=False)
     def api_send(self, token=None, message=None, **kwargs):
         """
         Recibe un mensaje del usuario, llama al motor de lógica del
@@ -150,7 +150,7 @@ class ChatUMayorController(http.Controller):
     # -----------------------------------------------------------------
     # API: catálogo de productos
     # -----------------------------------------------------------------
-    @http.route('/chat/api/products', type='json', auth='public', csrf=False)
+    @http.route('/chat/api/products', type='jsonrpc', auth='public', csrf=False)
     def api_products(self, **kwargs):
         """Devuelve los productos financieros activos para mostrarlos como chips."""
         products = request.env['chat.umayor.product'].sudo().search(
@@ -166,7 +166,7 @@ class ChatUMayorController(http.Controller):
     # -----------------------------------------------------------------
     # API: solicitar firma digital (PUNTO 4 - Integración con Odoo Sign)
     # -----------------------------------------------------------------
-    @http.route('/chat/api/sign_request', type='json', auth='public', csrf=False)
+    @http.route('/chat/api/sign_request', type='jsonrpc', auth='public', csrf=False)
     def api_sign_request(self, token=None, product_code=None,
                          signer_name=None, signer_email=None, **kwargs):
         """
@@ -211,7 +211,7 @@ class ChatUMayorController(http.Controller):
                 ),
             }
 
-        if not product.sign_template_id:
+        if not product.sign_template_ref:
             return {
                 'error': 'sin_plantilla',
                 'message': _('Este producto aún no tiene plantilla de contrato configurada.'),
@@ -228,7 +228,7 @@ class ChatUMayorController(http.Controller):
 
         # Crear la solicitud de firma usando la plantilla del producto
         try:
-            template = product.sign_template_id
+            template = product.sign_template_ref
             # En Odoo 19 se crea sign.request enlazando los signer_ids al template
             sign_request = SignRequest.sudo().create({
                 'template_id': template.id,
@@ -244,7 +244,7 @@ class ChatUMayorController(http.Controller):
             session.write({
                 'state': 'awaiting_signature',
                 'product_id': product.id,
-                'sign_request_id': sign_request.id,
+                'sign_request_ref': '%s,%s' % ('sign.request', sign_request.id),
                 'partner_id': partner.id,
                 'visitor_email': signer_email,
                 'visitor_name': signer_name,

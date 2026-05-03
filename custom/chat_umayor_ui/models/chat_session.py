@@ -52,7 +52,6 @@ class ChatSession(models.Model):
         string='Estado',
         default='draft',
         required=True,
-        tracking=True,
     )
 
     product_id = fields.Many2one(
@@ -61,11 +60,14 @@ class ChatSession(models.Model):
         help='Producto que el cliente está cotizando/contratando.',
     )
 
-    sign_request_id = fields.Many2one(
-        'sign.request',
+    # NOTA: No usamos Many2one a 'sign.request' porque obligaría a que el
+    # módulo Sign esté instalado siempre. En su lugar guardamos el ID y
+    # un nombre de modelo, así el módulo carga aunque Sign no esté presente.
+    sign_request_ref = fields.Reference(
+        selection=[('sign.request', 'Solicitud de firma')],
         string='Solicitud de firma',
-        ondelete='set null',
-        help='Vinculada cuando el cliente acepta firmar el contrato.',
+        help='Referencia dinámica a la solicitud de firma de Odoo Sign. '
+             'Solo se llena si el módulo Sign está instalado.',
     )
 
     message_ids = fields.One2many(

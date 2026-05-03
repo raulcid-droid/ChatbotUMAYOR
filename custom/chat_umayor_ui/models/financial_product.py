@@ -31,13 +31,18 @@ class FinancialProduct(models.Model):
     max_amount = fields.Float(string='Monto máximo')
 
     # Plantilla a enviar a Odoo Sign cuando el cliente acepta contratar
-    sign_template_id = fields.Many2one(
-        'sign.template',
+    # Referencia opcional a la plantilla de Odoo Sign (igual que sign_request_ref
+    # en chat.umayor.session: usamos Reference para no obligar la instalación
+    # del módulo `sign`).
+    sign_template_ref = fields.Reference(
+        selection=[('sign.template', 'Plantilla de firma')],
         string='Plantilla de contrato (Odoo Sign)',
-        ondelete='set null',
-        help='Plantilla que se envía al cliente para firmar.',
+        help='Plantilla que se envía al cliente para firmar. Solo aplica '
+             'si el módulo Sign está instalado.',
     )
 
-    _sql_constraints = [
-        ('code_unique', 'UNIQUE(code)', 'El código del producto debe ser único.'),
-    ]
+    # Odoo 19: la sintaxis _sql_constraints se reemplazó por models.Constraint
+    _code_unique = models.Constraint(
+        'UNIQUE(code)',
+        'El código del producto debe ser único.',
+    )
