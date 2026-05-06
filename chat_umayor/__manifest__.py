@@ -13,8 +13,8 @@
         'web.assets_frontend': [
             'chat_umayor/static/src/css/chatbot.css',
             'chat_umayor/static/src/js/chatbot.js',
-            'chat_umayor/static/src/css/chatbot_extras.css',
-            'chat_umayor/static/src/js/chatbot_extras.js',
+            #'chat_umayor/static/src/css/chatbot_extras.css',
+            #'chat_umayor/static/src/js/chatbot_extras.js',
         ],
     },
     'installable': True,
