@@ -7,6 +7,7 @@
     'depends': ['website', 'base', 'mail', 'sign'],
     'data': [
         'security/ir.model.access.csv',
+        'data/system_prompt.xml',
         'views/assets.xml',
     ],
     'assets': {
