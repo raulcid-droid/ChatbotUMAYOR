@@ -12,6 +12,7 @@ from unittest.mock import MagicMock, patch
 
 from odoo.tests import tagged
 from odoo.tests.common import TransactionCase
+from odoo.tools import mute_logger
 
 from odoo.addons.chat_umayor.services.gemini_client import (
     _CANNED_FALLBACK,
@@ -19,6 +20,12 @@ from odoo.addons.chat_umayor.services.gemini_client import (
     GeminiClient,
     LLMUnavailable,
 )
+
+# Logger del wrapper. Los tests que ejercen ramas de error emiten
+# ``_logger.error(...)`` a propósito; silenciamos esa salida para no
+# confundir el resumen de staging con falsos positivos (ver NOTES.md
+# sesión 2026-05-07).
+_GEMINI_LOGGER = "odoo.addons.chat_umayor.services.gemini_client"
 
 
 # Excepciones "sintéticas" que imitan las del SDK sin importarlo.
@@ -73,6 +80,7 @@ class TestGeminiClient(TransactionCase):
         with patch.dict("os.environ", {"GEMINI_API_KEY": "env-llave"}):
             self.assertEqual(self.client._api_key(), "env-llave")
 
+    @mute_logger(_GEMINI_LOGGER)
     def test_api_key_missing_raises_llm_unavailable(self) -> None:
         """Sin param ni env, ``_api_key()`` levanta ``LLMUnavailable``."""
         import os
@@ -139,6 +147,7 @@ class TestGeminiClient(TransactionCase):
         self.assertEqual(reply, "ok")
         self.assertEqual(mock_call.call_count, 2)
 
+    @mute_logger(_GEMINI_LOGGER)
     def test_generate_reply_gives_up_after_max_retries(self) -> None:
         """Tras 3 rate limits consecutivos, levanta ``LLMUnavailable``."""
         with (
@@ -188,6 +197,7 @@ class TestGeminiClient(TransactionCase):
     # Auth error: levanta LLMUnavailable
     # ------------------------------------------------------------------
 
+    @mute_logger(_GEMINI_LOGGER)
     def test_generate_reply_auth_error_raises(self) -> None:
         """Un 401 del SDK levanta ``LLMUnavailable``, sin reintentar."""
         with patch.object(
