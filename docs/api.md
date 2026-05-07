@@ -1,8 +1,9 @@
 # API `chat_umayor` — contrato backend ↔ frontend
 
-- **Versión**: `v0.2` (draft · propuesta unilateral del backend).
-- **Estado**: pendiente de validación con la compañera de UI.
-- **Fecha**: 2026-05-03.
+- **Versión**: `v0.3` (draft · propuesta unilateral del backend).
+- **Estado**: implementados 2 de 4 endpoints (`/session/new`, `/message`).
+  `/submit_data` y `/sign` son **stubs** que devuelven `INVALID_STATE`.
+- **Fecha**: 2026-05-07.
 - **Fuente de verdad**: este documento. Cualquier cambio en endpoints se
   refleja aquí **en el mismo commit** que toca `controllers/main.py`
   (regla §10.6 de `AGENTS.md`).
@@ -145,7 +146,7 @@ Crea una nueva sesión de chat.
   "data": {
     "session_id": 42,
     "state": "greeting",
-    "greeting_message": "Hola, soy el asistente virtual de Banco RRJ. ¿En qué puedo ayudarte?",
+    "greeting_message": "Hola, soy el asistente virtual de Banco UMayor. Puedo ayudarte a contratar un SOAP o un Depósito a Plazo. ¿Qué te interesa?",
     "created_at": "2026-05-02T14:23:11+00:00"
   }
 }
@@ -182,27 +183,47 @@ Envía un mensaje del usuario y recibe la respuesta del bot.
   "data": {
     "reply": "Perfecto, te puedo ofrecer SOAP o Depósito a Plazo. ¿Cuál te interesa?",
     "state": "discovery",
-    "suggestions": ["SOAP", "Depósito a Plazo"]
+    "product_code": null,
+    "suggestions": []
+  }
+}
+```
+
+**Response 200 OK (tras elegir SOAP en product_info y confirmar)**:
+```json
+{
+  "ok": true,
+  "data": {
+    "reply": "Genial, ahora te pido tus datos en un formulario.",
+    "state": "data_collection",
+    "product_code": "soap",
+    "suggestions": []
   }
 }
 ```
 
 **Campos de `data`**:
-| Campo         | Tipo             | Descripción                                                        |
-|---------------|------------------|--------------------------------------------------------------------|
-| `reply`       | string           | Respuesta generada por Gemini (o fallback canned ante error).      |
-| `state`       | string           | Nuevo estado del FSM tras procesar el mensaje.                     |
-| `suggestions` | array[string]?   | Opcional. Chips/respuestas rápidas sugeridas para el usuario.      |
+| Campo          | Tipo                | Descripción                                                                                 |
+|----------------|---------------------|---------------------------------------------------------------------------------------------|
+| `reply`        | string              | Respuesta generada por Gemini (o fallback canned ante error).                               |
+| `state`        | string              | Nuevo estado del FSM tras procesar el mensaje.                                              |
+| `product_code` | `"soap"\|"deposit"\|null` | **Siempre presente.** `null` si no se ha elegido producto; valor fijado al elegir en discovery. |
+| `suggestions`  | array[string]       | Chips/respuestas rápidas sugeridas. Vacío en v0.3; se rellena en PLAN 08.                   |
 
 **Errores posibles**: `SESSION_NOT_FOUND`, `SESSION_CLOSED`, `LLM_UNAVAILABLE`, `VALIDATION_ERROR` (si `content` viene vacío o >2000).
 
+**Nota sobre `LLM_UNAVAILABLE`**: cuando Gemini no responde tras reintentos, la respuesta viene con `ok=false` y `error.code="LLM_UNAVAILABLE"`, pero además incluye `error.reply`, `error.state` y `error.product_code` para que la UI pueda mostrar un mensaje canned sin bloquear la conversación.
+
 **Notas backend**:
 - Guarda el mensaje del usuario en `chatbot.message`, aplica `_sanitize_for_llm()`, llama a Gemini con últimos N=10 mensajes (§7 AGENTS).
-- Ante `LLM_UNAVAILABLE`, `reply` viene con el canned y `state` no cambia.
+- Ante `LLM_UNAVAILABLE`, `state` no cambia y se persiste un turno `assistant` con el canned para no desbalancear el historial.
+- Transiciones de FSM: en v0.3 se deciden server-side por heurística de keywords (`chatbot.session._classify_intent`). En PLAN 08 se migrará a respuesta estructurada de Gemini (JSON mode).
 
 ---
 
 ### 4.3 `POST /chat_umayor/session/<int:session_id>/submit_data`
+
+> ⚠️ **Stub en v0.3**: devuelve siempre `{"ok": false, "error": {"code": "INVALID_STATE", "message": "Operación aún no disponible en esta versión."}}`. La implementación real llega en **PLAN 08** (cuando existan `res.partner` + productos SOAP/Depósito + cálculos). El contrato del request/response de abajo es el objetivo final, no el comportamiento actual.
 
 Envía el formulario con los datos del cliente y del producto elegido.
 Transición típica: `data_collection → review`.
@@ -296,6 +317,8 @@ Para Depósito, `calculated` contiene `{"interest": ..., "total_at_maturity": ..
 
 ### 4.4 `POST /chat_umayor/session/<int:session_id>/sign`
 
+> ⚠️ **Stub en v0.3**: devuelve siempre `{"ok": false, "error": {"code": "INVALID_STATE", "message": "Operación aún no disponible en esta versión."}}`. La implementación real llega en **PLAN 09** (integración con Odoo Sign). El contrato de abajo es el objetivo final, no el comportamiento actual.
+
 Lanza el flujo de firma con Odoo Sign. Requiere `state='review'` (o `signing` si es reintento).
 
 **Request**: body vacío (`{}`).
@@ -333,6 +356,17 @@ Lanza el flujo de firma con Odoo Sign. Requiere `state='review'` (o `signing` si
 
 ## 6. Changelog
 
+- **v0.3** (2026-05-07): primera versión con endpoints reales
+  implementados.
+  - `/session/new` y `/session/<id>/message` funcionales (PLAN 07).
+  - `/submit_data` y `/sign` marcados como **stubs** que devuelven
+    `INVALID_STATE` hasta PLAN 08 y PLAN 09 respectivamente.
+  - Response de `/message` incluye `product_code` (siempre presente;
+    `null` si no aplica) para que el front no tenga que inferirlo del
+    texto. Campo estable tanto en éxito como en `LLM_UNAVAILABLE`.
+  - Saludo actualizado a "Banco UMayor" (coherencia con el proyecto).
+  - Transiciones del FSM descritas en §4.2: heurística server-side en
+    v0.3, migración a Gemini JSON mode prevista en PLAN 08.
 - **v0.2** (2026-05-03): rename `type='json'` → `type='jsonrpc'`. Desde
   Odoo 19.0 el primero es un alias deprecado del segundo. Sin cambios
   en payloads ni envoltorio JSON-RPC: solo el nombre del `type` en el
@@ -342,4 +376,4 @@ Lanza el flujo de firma con Odoo Sign. Requiere `state='review'` (o `signing` si
   TBD de CSRF.
 - **v0** (2026-05-02): primer draft tras PLAN 02. Sin implementación aún.
 
-<!-- v0.2 · 2026-05-03 · rename type='json' → 'jsonrpc' (alias deprecado en Odoo 19) -->
+<!-- v0.3 · 2026-05-07 · PLAN 07: /session/new + /message reales, stubs documentados, product_code estable -->

@@ -292,3 +292,20 @@ class ChatbotSession(models.Model):
 
         # data_collection, review, signing, closed: no avanzan por chat.
         return None
+
+    @classmethod
+    def _detect_product(cls, text: str) -> str | bool:
+        """Devuelve ``'soap'``, ``'deposit'`` o ``False`` según el texto.
+
+        Reutiliza las keywords de ``_classify_intent`` para decidir el
+        ``product_code`` cuando el usuario transiciona de ``discovery``
+        a ``product_info``. Pura; no toca ORM.
+        """
+        normalized = cls._normalize(text)
+        if not normalized:
+            return False
+        if any(k in normalized for k in cls._INTENT_KEYWORDS_DISCOVERY_SOAP):
+            return "soap"
+        if any(k in normalized for k in cls._INTENT_KEYWORDS_DISCOVERY_DEPOSIT):
+            return "deposit"
+        return False
