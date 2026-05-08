@@ -1,0 +1,8 @@
+# Documentación y Planes (Solo local)
+PLAN.md
+NOTES.md
+AGENTS.md
+
+# Bytecode de Python
+__pycache__/
+*.pyc

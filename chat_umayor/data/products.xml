@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo noupdate="1">
+
+    <!--
+        Singletons de los productos que comercializa el chatbot.
+        ``noupdate="1"`` para que `-u chat_umayor` no sobrescriba
+        cambios manuales que el staff haga desde la shell/ORM.
+
+        Las tarifas (SOAP por tipo de vehículo) y tasas (Depósito por
+        plazo) están en el código de cada modelo, no aquí, para
+        mantenerlas versionadas junto a la lógica.
+    -->
+
+    <record id="product_soap_singleton" model="chat_umayor.product.soap">
+        <field name="name">SOAP</field>
+        <field name="currency">CLP</field>
+    </record>
+
+    <record id="product_deposit_singleton" model="chat_umayor.product.deposit">
+        <field name="name">Depósito a Plazo</field>
+        <field name="currency">CLP</field>
+    </record>
+
+</odoo>

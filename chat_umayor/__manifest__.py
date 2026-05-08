@@ -4,8 +4,11 @@
     'summary': 'Asistente Virtual Banco UMayor',
     'author': 'UMayor',
     'category': 'Website',
-    'depends': ['website'],
+    'depends': ['website', 'base', 'mail', 'sign'],
     'data': [
+        'security/ir.model.access.csv',
+        'data/system_prompt.xml',
+        'data/products.xml',
         'views/assets.xml',
     ],
     'assets': {
