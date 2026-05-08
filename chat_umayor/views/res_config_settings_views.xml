@@ -2,24 +2,24 @@
 <odoo>
     <record id="view_chat_umayor_config_form" model="ir.ui.view">
         <field name="name">chat.umayor.config.form</field>
-        <field name="model">res.config.settings</field>
+        <field name="model">chat.umayor.config</field>
         <field name="arch" type="xml">
-            <form string="Chat UMayor — Configuración">
+            <form string="Configuración Chat UMayor">
                 <sheet>
                     <group string="Gemini AI">
-                        <field name="chat_umayor_gemini_api_key" password="True"/>
-                        <field name="chat_umayor_gemini_model"/>
-                        <field name="chat_umayor_gemini_timeout"/>
+                        <field name="gemini_api_key" password="True"/>
+                        <field name="gemini_model"/>
+                        <field name="gemini_timeout"/>
                     </group>
                     <group string="System Prompt">
-                        <field name="chat_umayor_system_prompt" widget="text" nolabel="1"/>
+                        <field name="gemini_system_prompt" widget="text" nolabel="1"/>
                     </group>
                     <group string="Firma Electrónica">
-                        <field name="chat_umayor_sign_template_id"/>
+                        <field name="sign_template_id"/>
                     </group>
                 </sheet>
                 <footer>
-                    <button string="Guardar" name="execute" type="object" class="btn-primary"/>
+                    <button string="Guardar" name="save" type="object" class="btn-primary"/>
                     <button string="Descartar" special="cancel"/>
                 </footer>
             </form>
@@ -28,7 +28,7 @@
 
     <record id="action_chat_umayor_config" model="ir.actions.act_window">
         <field name="name">Chat UMayor</field>
-        <field name="res_model">res.config.settings</field>
+        <field name="res_model">chat.umayor.config</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="view_chat_umayor_config_form"/>
         <field name="target">current</field>

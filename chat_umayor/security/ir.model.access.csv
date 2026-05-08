@@ -4,3 +4,4 @@ access_chatbot_message_user,chatbot.message user,model_chatbot_message,base.grou
 access_chat_umayor_product_soap_user,chat_umayor.product.soap user,model_chat_umayor_product_soap,base.group_user,1,1,1,1
 access_chat_umayor_product_deposit_user,chat_umayor.product.deposit user,model_chat_umayor_product_deposit,base.group_user,1,1,1,1
 access_chat_umayor_contract_user,chat_umayor.contract user,model_chat_umayor_contract,base.group_user,1,1,1,1
+access_chat_umayor_config_admin,chat.umayor.config admin,model_chat_umayor_config,base.group_system,1,1,1,1
