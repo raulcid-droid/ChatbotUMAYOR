@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="chat_umayor.ChatBot">
+        <div class="chatbot-container">
+            <div t-if="state.isOpen" class="chatbot-window">
+                <div class="chatbot-header">
+                    <div class="chatbot-header-info">
+                        <div class="chatbot-avatar">RRJ</div>
+                        <div>
+                            <div class="chatbot-header-name">Asistente Virtual</div>
+                            <div class="chatbot-header-status">En línea</div>
+                        </div>
+                    </div>
+                    <button t-on-click="toggleChat" class="chatbot-close">✕</button>
+                </div>
+
+                <div class="chatbot-messages" t-ref="messagesContainer">
+                    <t t-foreach="state.messages" t-as="msg" t-key="msg_index">
+                        <div t-attf-class="chatbot-message chatbot-message--#{msg.from}">
+                            <div class="chatbot-bubble">
+                                <t t-esc="msg.text"/>
+                            </div>
+                        </div>
+                    </t>
+                    <div t-if="state.isLoading" class="chatbot-message chatbot-message--bot">
+                        <div class="chatbot-bubble chatbot-typing">
+                            <span/><span/><span/>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chatbot-input-area">
+                    <input
+                        type="text"
+                        t-model="state.inputValue"
+                        t-on-keydown="onKeyDown"
+                        placeholder="Escribe tu mensaje..."
+                        class="chatbot-input"
+                    />
+                    <button t-on-click="sendMessage" class="chatbot-send-btn">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="22" y1="2" x2="11" y2="13"/>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <button t-on-click="toggleChat" class="chatbot-fab">
+                <t t-if="!state.isOpen">
+                    <svg viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
+                    </svg>
+                </t>
+                <t t-else="">✕</t>
+            </button>
+        </div>
+    </t>
+</templates>
