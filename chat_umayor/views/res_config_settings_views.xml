@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_chat_umayor" model="ir.ui.view">
+        <field name="name">res.config.settings.view.chat.umayor</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.action_general_configuration"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[hasclass('settings')]" position="inside">
+                <div class="app_settings_block" data-string="Chat UMayor" string="Chat UMayor" data-key="chat_umayor">
+                    <h2>Chat UMayor</h2>
+
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Gemini API Key</span>
+                                <div class="text-muted">
+                                    Clave de API de Google Gemini. Si está vacía se usa la variable de entorno GEMINI_API_KEY.
+                                </div>
+                                <div class="content-group mt8">
+                                    <field name="chat_umayor_gemini_api_key" password="True" placeholder="AIza..."/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Modelo Gemini</span>
+                                <div class="text-muted">
+                                    Identificador del modelo. Por defecto gemini-2.5-flash-lite.
+                                </div>
+                                <div class="content-group mt8">
+                                    <field name="chat_umayor_gemini_model" placeholder="gemini-2.5-flash-lite"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Timeout Gemini (segundos)</span>
+                                <div class="text-muted">
+                                    Tiempo máximo de espera por respuesta del LLM.
+                                </div>
+                                <div class="content-group mt8">
+                                    <field name="chat_umayor_gemini_timeout"/>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Plantilla de firma</span>
+                                <div class="text-muted">
+                                    Plantilla de Odoo Sign para el flujo de firma de contratos.
+                                </div>
+                                <div class="content-group mt8">
+                                    <field name="chat_umayor_sign_template_id"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 class="mt16">System Prompt</h3>
+                    <div class="row o_settings_container">
+                        <div class="col-12 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <div class="text-muted">
+                                    Prompt de sistema enviado a Gemini antes del historial. Editable sin redeploy.
+                                </div>
+                                <div class="content-group mt8">
+                                    <field name="chat_umayor_system_prompt" rows="8"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>
