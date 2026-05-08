@@ -31,7 +31,7 @@
         <field name="res_model">res.config.settings</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="view_chat_umayor_config_form"/>
-        <field name="target">inline</field>
+        <field name="target">current</field>
     </record>
 
     <menuitem id="menu_chat_umayor_config"
