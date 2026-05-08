@@ -40,7 +40,7 @@ class ResConfigSettings(models.TransientModel):
         "gemini-2.5-flash-lite (familia Flash, variante económica).",
     )
 
-    chat_umayor_system_prompt = fields.Text(
+    chat_umayor_system_prompt = fields.Char(
         string="System Prompt",
         config_parameter="chat_umayor.system_prompt",
         help="Prompt de sistema que recibe Gemini antes del historial. "

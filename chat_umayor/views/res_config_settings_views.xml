@@ -72,7 +72,7 @@
                                     Prompt de sistema enviado a Gemini antes del historial. Editable sin redeploy.
                                 </div>
                                 <div class="content-group mt8">
-                                    <field name="chat_umayor_system_prompt" rows="8"/>
+                                    <field name="chat_umayor_system_prompt" widget="text" rows="8"/>
                                 </div>
                             </div>
                         </div>
