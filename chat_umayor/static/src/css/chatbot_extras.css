@@ -1,0 +1,353 @@
+/* =========================================================================
+ * chatbot_extras.css
+ * -------------------------------------------------------------------------
+ * Estilos de los componentes que extienden el widget:
+ *   - Chips de sugerencias
+ *   - Formulario de captura de datos
+ *   - Tarjeta de revisión y botón de "Firmar contrato"
+ *
+ * Hereda la paleta del widget (#1a73e8) para mantener consistencia.
+ * ========================================================================= */
+
+/* -------------------------------------------------------------------------
+ * Chips de sugerencias
+ * ------------------------------------------------------------------------- */
+.cu-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 6px 0 4px 0;
+  padding: 0 4px;
+}
+
+.cu-chip {
+  background: #fff;
+  border: 1.5px solid #1a73e8;
+  color: #1a73e8;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.cu-chip:hover {
+  background: #1a73e8;
+  color: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(26, 115, 232, 0.25);
+}
+
+.cu-chip:active {
+  transform: translateY(0);
+}
+
+/* -------------------------------------------------------------------------
+ * Formulario de captura
+ * ------------------------------------------------------------------------- */
+.cu-form {
+  background: #fff;
+  border: 1px solid #e8eaed;
+  border-radius: 12px;
+  padding: 14px;
+  margin: 8px 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  animation: cu-fadein 0.25s ease;
+}
+
+@keyframes cu-fadein {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.cu-form-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #202124;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.cu-form-divider {
+  font-size: 12px;
+  font-weight: 600;
+  color: #5f6368;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 12px 0 6px 0;
+  padding-top: 8px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.cu-form-row {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+.cu-form-row label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #5f6368;
+  margin-bottom: 3px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.cu-form-row input {
+  border: 1px solid #dadce0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 13px;
+  font-family: inherit;
+  color: #202124;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+  outline: none;
+}
+
+.cu-form-row input:focus {
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
+}
+
+.cu-form-row input:invalid:not(:placeholder-shown) {
+  border-color: #d93025;
+}
+
+/* Estado de error explícito (cuando JavaScript marca el campo) */
+.cu-form-row input.cu-input-error {
+  border-color: #d93025;
+  background: #fef7f7;
+}
+.cu-form-row input.cu-input-error:focus {
+  box-shadow: 0 0 0 3px rgba(217, 48, 37, 0.15);
+}
+
+.cu-form-submit {
+  width: 100%;
+  background: #1a73e8;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.15s;
+}
+
+.cu-form-submit:hover {
+  background: #1557b0;
+}
+
+.cu-form-submit:disabled {
+  background: #adb5bd;
+  cursor: not-allowed;
+}
+
+.cu-form-error {
+  background: #fce8e6;
+  color: #d93025;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12px;
+  margin-top: 8px;
+}
+
+/* -------------------------------------------------------------------------
+ * Tarjeta de revisión (resumen antes de firmar)
+ * ------------------------------------------------------------------------- */
+.cu-review {
+  background: #fff;
+  border: 1px solid #d2e3fc;
+  border-radius: 12px;
+  padding: 14px;
+  margin: 8px 0;
+  box-shadow: 0 2px 12px rgba(26, 115, 232, 0.1);
+  animation: cu-fadein 0.3s ease;
+}
+
+.cu-review-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #e8f0fe;
+}
+
+.cu-review-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1a73e8;
+  letter-spacing: 0.2px;
+}
+
+.cu-review-section {
+  margin-bottom: 10px;
+}
+
+.cu-review-section-title {
+  font-size: 11px;
+  font-weight: 700;
+  color: #5f6368;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  margin-bottom: 6px;
+  padding-bottom: 4px;
+  border-bottom: 1px dashed #e8eaed;
+}
+
+.cu-review-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  font-size: 13px;
+}
+
+.cu-review-label {
+  color: #5f6368;
+  font-weight: 500;
+}
+
+.cu-review-value {
+  color: #202124;
+  font-weight: 600;
+  text-align: right;
+  word-break: break-word;
+  max-width: 60%;
+}
+
+.cu-review-highlight {
+  background: linear-gradient(135deg, #f8fbff 0%, #e8f0fe 100%);
+  border-radius: 8px;
+  padding: 12px;
+  margin: 12px 0 14px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #d2e3fc;
+}
+
+.cu-review-highlight-label {
+  font-size: 12px;
+  color: #1a73e8;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.cu-review-highlight-value {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a73e8;
+}
+
+.cu-review-accept {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 12px 0;
+  font-size: 12px;
+  color: #5d4037;
+  cursor: pointer;
+  user-select: none;
+}
+
+.cu-review-checkbox {
+  margin: 1px 0 0 0;
+  accent-color: #1a73e8;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cu-review-accept span {
+  flex: 1;
+  line-height: 1.4;
+}
+
+/* -------------------------------------------------------------------------
+ * Botón de firma
+ * ------------------------------------------------------------------------- */
+.cu-sign {
+  background: linear-gradient(135deg, #f8fbff 0%, #e8f0fe 100%);
+  border: 1px solid #d2e3fc;
+  border-radius: 12px;
+  padding: 14px;
+  margin: 8px 0;
+  text-align: center;
+  animation: cu-fadein 0.25s ease;
+}
+
+.cu-sign-btn {
+  background: #1a73e8;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+/* Cuando el botón vive dentro de la tarjeta de revisión, ocupa todo el ancho */
+.cu-review .cu-sign-btn {
+  width: 100%;
+  padding: 11px;
+  font-size: 14px;
+}
+
+.cu-sign-btn:hover {
+  background: #1557b0;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(26, 115, 232, 0.3);
+}
+
+.cu-sign-btn:disabled {
+  background: #adb5bd;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.cu-sign-help {
+  font-size: 11px;
+  color: #5f6368;
+  margin: 8px 0 0 0;
+}
+
+/* -------------------------------------------------------------------------
+ * Responsive
+ * ------------------------------------------------------------------------- */
+@media (max-width: 480px) {
+  .cu-form,
+  .cu-sign {
+    padding: 12px;
+  }
+
+  .cu-chip {
+    font-size: 12px;
+    padding: 5px 11px;
+  }
+}
