@@ -9,53 +9,18 @@
                 <div class="app_settings_block" data-string="Chat UMayor" string="Chat UMayor" data-key="chat_umayor">
                     <h2>Chat UMayor</h2>
                     <div class="row mt16 o_settings_container">
-                        <div class="col-12 col-lg-6 o_setting_box">
-                            <div class="o_setting_left_pane"/>
-                            <div class="o_setting_right_pane">
-                                <span class="o_form_label">Gemini API Key</span>
-                                <div class="text-muted">Clave de API de Google Gemini.</div>
-                                <div class="content-group mt8">
-                                    <field name="chat_umayor_gemini_api_key" password="True" placeholder="AIza..."/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-lg-6 o_setting_box">
-                            <div class="o_setting_left_pane"/>
-                            <div class="o_setting_right_pane">
-                                <span class="o_form_label">Modelo Gemini</span>
-                                <div class="text-muted">Por defecto gemini-2.5-flash-lite.</div>
-                                <div class="content-group mt8">
-                                    <field name="chat_umayor_gemini_model" placeholder="gemini-2.5-flash-lite"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-lg-6 o_setting_box">
-                            <div class="o_setting_left_pane"/>
-                            <div class="o_setting_right_pane">
-                                <span class="o_form_label">Timeout Gemini (s)</span>
-                                <div class="text-muted">Tiempo máximo de espera del LLM.</div>
-                                <div class="content-group mt8">
-                                    <field name="chat_umayor_gemini_timeout"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-12 col-lg-6 o_setting_box">
-                            <div class="o_setting_left_pane"/>
-                            <div class="o_setting_right_pane">
-                                <span class="o_form_label">Plantilla de firma</span>
-                                <div class="text-muted">Plantilla de Odoo Sign para el flujo de firma.</div>
-                                <div class="content-group mt8">
-                                    <field name="chat_umayor_sign_template_id"/>
-                                </div>
-                            </div>
-                        </div>
                         <div class="col-12 o_setting_box">
                             <div class="o_setting_left_pane"/>
                             <div class="o_setting_right_pane">
-                                <span class="o_form_label">System Prompt</span>
-                                <div class="text-muted">Prompt enviado a Gemini antes del historial. Editable sin redeploy.</div>
+                                <span class="o_form_label">Asistente Virtual Banco UMayor</span>
+                                <div class="text-muted">
+                                    Configura la API Key de Gemini, modelo, timeout y system prompt.
+                                </div>
                                 <div class="content-group mt8">
-                                    <field name="chat_umayor_system_prompt"/>
+                                    <button string="Abrir Configuración"
+                                            name="action_open_chat_umayor_config"
+                                            type="object"
+                                            class="btn btn-primary"/>
                                 </div>
                             </div>
                         </div>
