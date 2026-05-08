@@ -157,7 +157,7 @@ class ChatbotContract(models.Model):
     # Constraints
     # ------------------------------------------------------------------
 
-    session_id_unique = models.Constraint(
+    _session_id_unique = models.Constraint(
         "unique(session_id)",
         "Ya existe un contrato para esta sesión.",
     )
