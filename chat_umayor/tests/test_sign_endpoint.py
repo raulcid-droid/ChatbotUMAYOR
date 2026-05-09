@@ -6,8 +6,9 @@ FK válido. Si algún test requiere que **falle** la creación (caso
 ``SIGN_UNAVAILABLE``), se limpia explícitamente el parámetro
 ``chat_umayor.sign_template_id``.
 
-La validación end-to-end con Sign real se hace manualmente (ver
-``tests/manual/test_sign_integration.py``).
+La validación end-to-end con Sign real se hace manualmente desde
+el widget contra una ``sign.template`` configurada en staging
+(ver ``HANDOFF-romina.md §F9``).
 """
 
 import base64

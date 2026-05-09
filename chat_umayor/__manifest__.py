@@ -1,7 +1,7 @@
 {
     'name': 'Chat UMayor',
     'version': '19.0.1.0.0',
-    'summary': 'Asistente Virtual Banco RRJ',
+    'summary': 'Asistente Virtual Banco UMayor',
     'author': 'UMayor',
     'category': 'Website',
     'depends': ['website', 'base', 'mail', 'sign'],

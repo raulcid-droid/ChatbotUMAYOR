@@ -159,18 +159,11 @@ defensa del proyecto:
    - Vía UI: Ajustes → Chat UMayor → "Plantilla de firma" (si F8 hecho).
    - Vía shell: `env["ir.config_parameter"].sudo().set_param("chat_umayor.sign_template_id", "7")`.
 
-**Validación**: probar el flujo end-to-end con el test manual que
-dejé en `chat_umayor/tests/manual/test_sign_integration.py`:
-
-```bash
-./odoo-bin --addons-path=addons,. -d chatbot_test \
-    --test-enable --stop-after-init \
-    -i chat_umayor --test-tags=chat_umayor_manual
-```
-
-Si pasa en verde, la plantilla está bien configurada y el flujo
-real funciona. Si `skipTest`, es porque el `ir.config_parameter` no
-está seteado; se vuelve al paso 4 de F9.
+**Validación**: probar el flujo manualmente desde el widget (F5+F6)
+contra la plantilla recién creada. La cobertura automatizada del
+flujo de firma vive en `tests/test_sign_endpoint.py` y
+`tests/test_sign_callback.py` (mocks), que ya corren con
+`--test-enable`; no hay test manual dedicado.
 
 ---
 

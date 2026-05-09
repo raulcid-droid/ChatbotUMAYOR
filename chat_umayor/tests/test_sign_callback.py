@@ -15,8 +15,11 @@ Estrategia de mocks:
     - ``search`` de ``chat_umayor.contract`` parcheado a nivel de
       clase para que devuelva el contrato que nos interesa.
 
-La integración end-to-end con Sign real se valida con el test
-manual ``tests/manual/test_sign_integration.py``.
+La integración end-to-end con Sign real no tiene cobertura
+automatizada dedicada: los mocks aquí y en ``test_sign_endpoint.py``
+son suficientes. La validación manual se hace desde el widget en
+staging contra una ``sign.template`` real (ver
+``HANDOFF-romina.md §F9``).
 """
 
 from unittest.mock import MagicMock, patch

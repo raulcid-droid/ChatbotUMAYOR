@@ -1,0 +1,390 @@
+# Translation of Odoo Server.
+# This file contains the translation of the Chat UMayor module.
+# Chile (es_CL) / Español genérico (es).
+#
+# Los strings de este módulo ya están escritos originalmente en
+# español. Este catálogo sigue la convención de Odoo (msgid==msgstr
+# cuando el idioma fuente coincide con el destino) para que el
+# runtime localizado tome estas cadenas como canónicas en vez de
+# intentar traducir desde inglés.
+#
+# msgid's repetidos entre modelos (ej. "Sesión", "Cliente", "Estado",
+# "Producto") se consolidan en una única entrada con múltiples
+# referencias `#:` — convención gettext estándar.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 19.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-08 00:00+0000\n"
+"PO-Revision-Date: 2026-05-08 00:00+0000\n"
+"Last-Translator: Equipo Chat UMayor\n"
+"Language-Team: Spanish <es@li.org>\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# =====================================================================
+# Manifest
+# =====================================================================
+
+#. module: chat_umayor
+#: model:ir.module.module,shortdesc:chat_umayor.module_meta_information
+msgid "Chat UMayor"
+msgstr "Chat UMayor"
+
+#. module: chat_umayor
+#: model:ir.module.module,summary:chat_umayor.module_meta_information
+msgid "Asistente Virtual Banco UMayor"
+msgstr "Asistente Virtual Banco UMayor"
+
+
+# =====================================================================
+# Nombres de modelos (_description)
+# =====================================================================
+
+#. module: chat_umayor
+#: model:ir.model,name:chat_umayor.model_chatbot_session
+msgid "Chatbot Session"
+msgstr "Sesión del Chatbot"
+
+#. module: chat_umayor
+#: model:ir.model,name:chat_umayor.model_chatbot_message
+msgid "Chatbot Message"
+msgstr "Mensaje del Chatbot"
+
+#. module: chat_umayor
+#: model:ir.model,name:chat_umayor.model_chat_umayor_contract
+msgid "Chat UMayor — Contrato"
+msgstr "Chat UMayor — Contrato"
+
+#. module: chat_umayor
+#: model:ir.model,name:chat_umayor.model_chat_umayor_product_soap
+msgid "Chat UMayor — Producto SOAP"
+msgstr "Chat UMayor — Producto SOAP"
+
+#. module: chat_umayor
+#: model:ir.model,name:chat_umayor.model_chat_umayor_product_deposit
+msgid "Chat UMayor — Producto Depósito a Plazo"
+msgstr "Chat UMayor — Producto Depósito a Plazo"
+
+
+# =====================================================================
+# Labels de campos (compartidos entre modelos)
+# =====================================================================
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chatbot_session__state
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_contract__state
+msgid "Estado"
+msgstr "Estado"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chatbot_session__partner_id
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_contract__partner_id
+msgid "Cliente"
+msgstr "Cliente"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chatbot_session__product_code
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_contract__product_code
+msgid "Producto"
+msgstr "Producto"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chatbot_message__session_id
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_contract__session_id
+msgid "Sesión"
+msgstr "Sesión"
+
+
+# =====================================================================
+# chatbot.session — labels propios y selections
+# =====================================================================
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chatbot_session__message_ids
+msgid "Mensajes"
+msgstr "Mensajes"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chatbot_session__submit_summary
+msgid "Resumen enviado"
+msgstr "Resumen enviado"
+
+#. module: chat_umayor
+#: model:ir.model.fields.selection,name:chat_umayor.selection__chatbot_session__state__greeting
+msgid "Saludo"
+msgstr "Saludo"
+
+#. module: chat_umayor
+#: model:ir.model.fields.selection,name:chat_umayor.selection__chatbot_session__state__discovery
+msgid "Descubrimiento"
+msgstr "Descubrimiento"
+
+#. module: chat_umayor
+#: model:ir.model.fields.selection,name:chat_umayor.selection__chatbot_session__state__product_info
+msgid "Información del producto"
+msgstr "Información del producto"
+
+#. module: chat_umayor
+#: model:ir.model.fields.selection,name:chat_umayor.selection__chatbot_session__state__data_collection
+msgid "Recolección de datos"
+msgstr "Recolección de datos"
+
+#. module: chat_umayor
+#: model:ir.model.fields.selection,name:chat_umayor.selection__chatbot_session__state__review
+msgid "Revisión"
+msgstr "Revisión"
+
+#. module: chat_umayor
+#: model:ir.model.fields.selection,name:chat_umayor.selection__chatbot_session__state__signing
+msgid "Firma"
+msgstr "Firma"
+
+#. module: chat_umayor
+#: model:ir.model.fields.selection,name:chat_umayor.selection__chatbot_session__state__closed
+msgid "Cerrada"
+msgstr "Cerrada"
+
+
+# =====================================================================
+# chatbot.session — mensajes de error (UserError)
+# =====================================================================
+
+#. module: chat_umayor
+#: code:addons/chat_umayor/models/chatbot_session.py:0
+#, python-format
+msgid ""
+"No se puede pasar del estado %(current)s a %(target)s. Transición inválida."
+msgstr ""
+"No se puede pasar del estado %(current)s a %(target)s. Transición inválida."
+
+#. module: chat_umayor
+#: code:addons/chat_umayor/models/chatbot_session.py:0
+#, python-format
+msgid "El contrato ya fue firmado."
+msgstr "El contrato ya fue firmado."
+
+#. module: chat_umayor
+#: code:addons/chat_umayor/models/chatbot_session.py:0
+#, python-format
+msgid ""
+"Existe un contrato en estado %(state)s para esta sesión; no se puede "
+"relanzar la firma."
+msgstr ""
+"Existe un contrato en estado %(state)s para esta sesión; no se puede "
+"relanzar la firma."
+
+#. module: chat_umayor
+#: code:addons/chat_umayor/models/chatbot_session.py:0
+#, python-format
+msgid "Faltan datos del formulario para generar el contrato."
+msgstr "Faltan datos del formulario para generar el contrato."
+
+#. module: chat_umayor
+#: code:addons/chat_umayor/models/chatbot_session.py:0
+#, python-format
+msgid "Datos del contrato corruptos. Contacta al administrador."
+msgstr "Datos del contrato corruptos. Contacta al administrador."
+
+#. module: chat_umayor
+#: code:addons/chat_umayor/models/chatbot_session.py:0
+#, python-format
+msgid "La firma no está configurada. Contacta al administrador."
+msgstr "La firma no está configurada. Contacta al administrador."
+
+#. module: chat_umayor
+#: code:addons/chat_umayor/models/chatbot_session.py:0
+#, python-format
+msgid "La plantilla de firma configurada no existe. Contacta al administrador."
+msgstr "La plantilla de firma configurada no existe. Contacta al administrador."
+
+#. module: chat_umayor
+#: code:addons/chat_umayor/models/chatbot_session.py:0
+#, python-format
+msgid "Contrato UMayor"
+msgstr "Contrato UMayor"
+
+#. module: chat_umayor
+#: code:addons/chat_umayor/models/chatbot_session.py:0
+#, python-format
+msgid "No se pudo iniciar la firma: %(err)s"
+msgstr "No se pudo iniciar la firma: %(err)s"
+
+
+# =====================================================================
+# chatbot.message — labels propios y selections
+# =====================================================================
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chatbot_message__role
+msgid "Rol"
+msgstr "Rol"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chatbot_message__content
+msgid "Contenido"
+msgstr "Contenido"
+
+#. module: chat_umayor
+#: model:ir.model.fields.selection,name:chat_umayor.selection__chatbot_message__role__user
+msgid "Usuario"
+msgstr "Usuario"
+
+#. module: chat_umayor
+#: model:ir.model.fields.selection,name:chat_umayor.selection__chatbot_message__role__assistant
+msgid "Asistente"
+msgstr "Asistente"
+
+#. module: chat_umayor
+#: model:ir.model.fields.selection,name:chat_umayor.selection__chatbot_message__role__system
+msgid "Sistema"
+msgstr "Sistema"
+
+
+# =====================================================================
+# chat_umayor.contract — labels propios y selections
+# =====================================================================
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_contract__sign_request_id
+msgid "Solicitud de firma"
+msgstr "Solicitud de firma"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_contract__partner_name
+msgid "Nombre (snapshot)"
+msgstr "Nombre (snapshot)"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_contract__partner_vat
+msgid "RUT (snapshot)"
+msgstr "RUT (snapshot)"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_contract__partner_email
+msgid "Email (snapshot)"
+msgstr "Email (snapshot)"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_contract__partner_phone
+msgid "Teléfono (snapshot)"
+msgstr "Teléfono (snapshot)"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_contract__product_data_json
+msgid "Datos del producto (JSON)"
+msgstr "Datos del producto (JSON)"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_contract__calculated_json
+msgid "Cálculo (JSON)"
+msgstr "Cálculo (JSON)"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_contract__signed_at
+msgid "Firmado en"
+msgstr "Firmado en"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_contract__reference
+msgid "Referencia"
+msgstr "Referencia"
+
+#. module: chat_umayor
+#: model:ir.model.fields.selection,name:chat_umayor.selection__chat_umayor_contract__state__draft
+msgid "Borrador"
+msgstr "Borrador"
+
+#. module: chat_umayor
+#: model:ir.model.fields.selection,name:chat_umayor.selection__chat_umayor_contract__state__signing
+msgid "En firma"
+msgstr "En firma"
+
+#. module: chat_umayor
+#: model:ir.model.fields.selection,name:chat_umayor.selection__chat_umayor_contract__state__signed
+msgid "Firmado"
+msgstr "Firmado"
+
+#. module: chat_umayor
+#: model:ir.model.fields.selection,name:chat_umayor.selection__chat_umayor_contract__state__cancelled
+msgid "Cancelado"
+msgstr "Cancelado"
+
+
+# =====================================================================
+# chat_umayor.contract — mensajes de error y constraint
+# =====================================================================
+
+#. module: chat_umayor
+#: code:addons/chat_umayor/models/chatbot_contract.py:0
+#, python-format
+msgid "No se puede marcar como firmado un contrato en estado %(state)s."
+msgstr "No se puede marcar como firmado un contrato en estado %(state)s."
+
+#. module: chat_umayor
+#: code:addons/chat_umayor/models/chatbot_contract.py:0
+#, python-format
+msgid "No se puede cancelar un contrato ya firmado."
+msgstr "No se puede cancelar un contrato ya firmado."
+
+#. module: chat_umayor
+#: code:addons/chat_umayor/models/chatbot_contract.py:0
+#, python-format
+msgid "El contrato no tiene solicitud de firma asociada."
+msgstr "El contrato no tiene solicitud de firma asociada."
+
+#. module: chat_umayor
+#: model:ir.model.constraint,message:chat_umayor.constraint_chat_umayor_contract_session_id_unique
+msgid "Ya existe un contrato para esta sesión."
+msgstr "Ya existe un contrato para esta sesión."
+
+
+# =====================================================================
+# Productos (SOAP y Depósito) — labels compartidos
+# =====================================================================
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_product_soap__name
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_product_deposit__name
+msgid "Nombre"
+msgstr "Nombre"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_product_soap__currency
+#: model:ir.model.fields,field_description:chat_umayor.field_chat_umayor_product_deposit__currency
+msgid "Moneda"
+msgstr "Moneda"
+
+
+# =====================================================================
+# Ajustes del módulo (res.config.settings)
+# =====================================================================
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_res_config_settings__chat_umayor_gemini_api_key
+msgid "Gemini API Key"
+msgstr "Gemini API Key"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_res_config_settings__chat_umayor_gemini_model
+msgid "Gemini Model"
+msgstr "Modelo Gemini"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_res_config_settings__chat_umayor_system_prompt
+msgid "System Prompt"
+msgstr "Prompt de sistema"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_res_config_settings__chat_umayor_gemini_timeout
+msgid "Gemini Timeout (s)"
+msgstr "Timeout Gemini (s)"
+
+#. module: chat_umayor
+#: model:ir.model.fields,field_description:chat_umayor.field_res_config_settings__chat_umayor_sign_template_id
+msgid "Plantilla de firma"
+msgstr "Plantilla de firma"
