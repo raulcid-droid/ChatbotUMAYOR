@@ -1,47 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="view_chat_umayor_config_form" model="ir.ui.view">
-        <field name="name">chat.umayor.config.form</field>
-        <field name="model">chat.umayor.config</field>
+    <record id="res_config_settings_view_chat_umayor" model="ir.ui.view">
+        <field name="name">res.config.settings.view.chat.umayor</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base_setup.action_general_configuration"/>
         <field name="arch" type="xml">
-            <form string="Configuración Chat UMayor">
-                <sheet>
-                    <group string="Gemini AI">
-                        <field name="gemini_api_key" password="True"/>
-                        <field name="gemini_model"/>
-                        <field name="gemini_timeout"/>
-                    </group>
-                    <group string="System Prompt">
-                        <field name="gemini_system_prompt" widget="text" nolabel="1"/>
-                    </group>
-                    <group string="Firma Electrónica">
-                        <field name="sign_template_id"/>
-                    </group>
-                </sheet>
-                <footer>
-                    <button string="Guardar" name="save" type="object" class="btn-primary"/>
-                    <button string="Descartar" special="cancel"/>
-                </footer>
-            </form>
+            <xpath expr="//div[hasclass('o_setting_container')]" position="inside">
+                <div class="app_settings_block" data-string="Chat UMayor" string="Chat UMayor" data-key="chat_umayor">
+                    <h2>Chat UMayor</h2>
+                    <div class="row mt16 o_settings_container">
+                        <div class="col-12 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Asistente Virtual Banco UMayor</span>
+                                <div class="text-muted">Configura la API Key de Gemini, modelo, timeout y system prompt.</div>
+                                <div class="content-group mt8">
+                                    <button string="Abrir Configuración"
+                                            name="action_open_chat_umayor_config"
+                                            type="object"
+                                            class="btn btn-primary"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </xpath>
         </field>
     </record>
-
-    <record id="action_chat_umayor_config" model="ir.actions.act_window">
-        <field name="name">Configuración</field>
-        <field name="res_model">chat.umayor.config</field>
-        <field name="view_mode">form</field>
-        <field name="view_id" ref="view_chat_umayor_config_form"/>
-        <field name="target">current</field>
-    </record>
-
-    <!-- Menú raíz del módulo -->
-    <menuitem id="menu_chat_umayor_root"
-              name="Chat UMayor"
-              sequence="90"/>
-
-    <menuitem id="menu_chat_umayor_config"
-              name="Configuración"
-              parent="menu_chat_umayor_root"
-              action="action_chat_umayor_config"
-              sequence="10"/>
 </odoo>
