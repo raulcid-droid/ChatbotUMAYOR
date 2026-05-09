@@ -37,6 +37,6 @@
     <menuitem id="menu_chat_umayor_config"
               name="Chat UMayor"
               action="action_chat_umayor_config"
-              parent="base.menu_administration"
+              parent="base_setup.action_general_configuration"
               sequence="100"/>
 </odoo>
