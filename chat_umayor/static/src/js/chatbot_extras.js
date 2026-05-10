@@ -942,9 +942,15 @@
   window.__chatbotExtras = {
     getSessionState: () => Object.assign({}, sessionState),
     getMetrics: () => window.__chatbotMetrics.slice(),
-    clearMetrics: () => {
-      window.__chatbotMetrics = [];
+    clearMetrics: () => { window.__chatbotMetrics = []; },
+    validateRut: validateRut,
+    reset: () => {
+      clearExtras();
+      unlockChatInput();
+      sessionState.sessionId = null;
+      sessionState.currentState = "greeting";
+      sessionState.demoMode = false;
+      startSession();
     },
-    validateRut: validateRut, // expuesta para testing
   };
 })();

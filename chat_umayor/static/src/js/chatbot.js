@@ -15,6 +15,14 @@
                         </div>
                     </div>
                     <div class="chatbot-header-actions">
+                        <button class="chatbot-clear" id="chatbot-clear" title="Limpiar chat">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6l-1 14H6L5 6"/>
+                                <path d="M10 11v6M14 11v6"/>
+                                <path d="M9 6V4h6v2"/>
+                            </svg>
+                        </button>
                         <button class="chatbot-expand" id="chatbot-expand" title="Ampliar">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                                 <polyline points="15 3 21 3 21 9"/><polyline points="9 21 3 21 3 15"/>
@@ -47,21 +55,51 @@
         const fab     = container.querySelector("#chatbot-fab");
         const close   = container.querySelector("#chatbot-close");
         const expand  = container.querySelector("#chatbot-expand");
+        const clear   = container.querySelector("#chatbot-clear");
         const input   = container.querySelector("#chatbot-input");
         const send    = container.querySelector("#chatbot-send");
         const msgs    = container.querySelector("#chatbot-messages");
 
-        addMessage("¡Hola! Soy el asistente virtual de UMayor. ¿En qué puedo ayudarte hoy?", "bot");
+        const GREETING = "¡Hola! Soy el asistente virtual de Banco UMayor. Puedo ayudarte a contratar un SOAP o un Depósito a Plazo. ¿Qué te interesa?";
+
+        addMessage(GREETING, "bot");
 
         fab.addEventListener("click", () => toggle(true));
         close.addEventListener("click", () => toggle(false));
         expand.addEventListener("click", toggleExpand);
+        clear.addEventListener("click", clearChat);
         send.addEventListener("click", sendMessage);
         input.addEventListener("keydown", (e) => { if (e.key === "Enter") sendMessage(); });
 
+        // Animación de atención: pulso + tooltip después de 4 segundos
+        const attentionTimer = setTimeout(() => {
+            fab.classList.add("chatbot-fab--pulse");
+            showTooltip();
+        }, 4000);
+
         function toggle(open) {
             window_.style.display = open ? "flex" : "none";
-            if (open) input.focus();
+            if (open) {
+                // Quitar animación de atención al abrir
+                fab.classList.remove("chatbot-fab--pulse");
+                clearTimeout(attentionTimer);
+                removeTooltip();
+                input.focus();
+            }
+        }
+
+        function showTooltip() {
+            if (document.querySelector(".chatbot-fab-tooltip")) return;
+            const tooltip = document.createElement("div");
+            tooltip.className = "chatbot-fab-tooltip";
+            tooltip.textContent = "¿En qué te ayudo?";
+            container.appendChild(tooltip);
+            setTimeout(removeTooltip, 4000);
+        }
+
+        function removeTooltip() {
+            const t = container.querySelector(".chatbot-fab-tooltip");
+            if (t) t.remove();
         }
 
         function toggleExpand() {
@@ -77,6 +115,22 @@
                        <line x1="21" y1="3" x2="14" y2="10"/><line x1="3" y1="21" x2="10" y2="14"/>
                    </svg>`;
             msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        function clearChat() {
+            // Limpiar mensajes
+            msgs.innerHTML = "";
+            // Desbloquear input si estaba bloqueado (por formulario)
+            input.disabled = false;
+            input.placeholder = "Escribe tu mensaje...";
+            send.disabled = false;
+            // Resetear sesión en chatbot_extras si está disponible
+            if (window.__chatbotExtras && window.__chatbotExtras.reset) {
+                window.__chatbotExtras.reset();
+            }
+            // Mostrar saludo nuevamente
+            addMessage(GREETING, "bot");
+            input.focus();
         }
 
         function addMessage(text, from) {
