@@ -691,3 +691,6 @@ button, input, textarea { font: inherit; }
 header#top { display: none !important; }
 footer.o_footer { display: none !important; }
 .o_footer_copyright { display: none !important; }
+
+/* Ocultar links del navbar pero mantener logo y botón */
+.navbar__menu { display: none !important; }
