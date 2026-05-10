@@ -209,6 +209,27 @@
     document.querySelectorAll(".cu-extras").forEach((el) => el.remove());
   }
 
+  function lockChatInput() {
+    const inputEl = document.getElementById("chatbot-input");
+    const sendBtn = document.getElementById("chatbot-send");
+    if (inputEl) {
+      inputEl.disabled = true;
+      inputEl.placeholder = "Completa el formulario de arriba...";
+    }
+    if (sendBtn) sendBtn.disabled = true;
+  }
+
+  function unlockChatInput() {
+    const inputEl = document.getElementById("chatbot-input");
+    const sendBtn = document.getElementById("chatbot-send");
+    if (inputEl) {
+      inputEl.disabled = false;
+      inputEl.placeholder = "Escribe tu mensaje...";
+      inputEl.focus();
+    }
+    if (sendBtn) sendBtn.disabled = false;
+  }
+
   function renderSuggestions(suggestions) {
     const msgsEl = document.getElementById("chatbot-messages");
     const wrap = document.createElement("div");
@@ -262,7 +283,17 @@
                 </div>
                 <div class="cu-form-row">
                     <label>Año</label>
-                    <input type="number" name="vehicle_year" required="required" min="1980" max="2030" />
+                    <input type="number" name="vehicle_year" required="required" min="1950" max="2027" />
+                </div>
+                <div class="cu-form-row">
+                    <label>Tipo de vehículo</label>
+                    <select name="vehicle_type" required="required">
+                        <option value="">Selecciona...</option>
+                        <option value="particular">Particular — $7.990</option>
+                        <option value="moto">Moto — $3.990</option>
+                        <option value="comercial">Comercial — $14.990</option>
+                        <option value="taxi">Taxi — $24.990</option>
+                    </select>
                 </div>
             `
                 : ""
@@ -312,6 +343,7 @@
 
     msgsEl.appendChild(form);
     msgsEl.scrollTop = msgsEl.scrollHeight;
+    lockChatInput();
   }
 
   async function submitDataForm(form, productCode) {
@@ -351,10 +383,8 @@
     };
     if (data.get("vehicle_plate")) {
       payload.product_data.vehicle_plate = data.get("vehicle_plate");
-      payload.product_data.vehicle_year = parseInt(
-        data.get("vehicle_year"),
-        10,
-      );
+      payload.product_data.vehicle_year = parseInt(data.get("vehicle_year"), 10);
+      payload.product_data.vehicle_type = data.get("vehicle_type");
     }
     if (data.get("amount")) {
       payload.product_data.amount = parseFloat(data.get("amount"));
@@ -383,16 +413,13 @@
     }
 
     if (response && response.ok && response.data) {
-      // Quitamos el formulario y mostramos un mensaje de confirmación
       form.remove();
+      unlockChatInput();
       const summary = response.data.summary || {};
-      const text = `✓ Datos recibidos. Revisa el resumen antes de firmar.`;
-      appendMessage(text, "bot");
+      appendMessage("✓ Datos recibidos. Revisa el resumen antes de firmar.", "bot");
 
       sessionState.currentState = response.data.state || "review";
       if (sessionState.currentState === "review") {
-        // Pasamos tanto el payload (lo que envió el usuario) como
-        // el summary (lo que devolvió el backend con cálculos).
         renderReviewCard(payload, summary);
       }
     } else {

@@ -103,20 +103,23 @@
   letter-spacing: 0.3px;
 }
 
-.cu-form-row input {
+.cu-form-row input,
+.cu-form-row select {
   border: 1px solid #dadce0;
   border-radius: 8px;
   padding: 8px 10px;
   font-size: 13px;
   font-family: inherit;
   color: #202124;
+  background: #fff;
   transition:
     border-color 0.15s,
     box-shadow 0.15s;
   outline: none;
 }
 
-.cu-form-row input:focus {
+.cu-form-row input:focus,
+.cu-form-row select:focus {
   border-color: #1a73e8;
   box-shadow: 0 0 0 3px rgba(26, 115, 232, 0.15);
 }
