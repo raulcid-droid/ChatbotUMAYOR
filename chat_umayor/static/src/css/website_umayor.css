@@ -686,3 +686,8 @@ button, input, textarea { font: inherit; }
 @keyframes phoneFloat { 0%, 100% { transform: rotate(9deg) translateY(0); } 50% { transform: rotate(9deg) translateY(-14px); } }
 @keyframes orbitGlow  { 0%, 100% { opacity: 0.72; filter: drop-shadow(0 0 18px rgba(255,22,65,0.72)); } 50% { opacity: 1; filter: drop-shadow(0 0 34px rgba(255,22,65,1)); } }
 @keyframes chartPulse { 0%, 100% { opacity: 0.78; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-2px); } }
+
+/* Ocultar navbar y footer nativos de Odoo */
+header#top { display: none !important; }
+footer.o_footer { display: none !important; }
+.o_footer_copyright { display: none !important; }
