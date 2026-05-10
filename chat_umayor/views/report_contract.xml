@@ -13,14 +13,15 @@
                         <t t-set="pd" t-value="doc._product_data()"/>
                         <t t-set="calc" t-value="doc._calculated_data()"/>
                         <t t-set="is_soap" t-value="doc.product_code == 'soap'"/>
-                        <t t-call="web.external_layout">
-                            <div class="page" style="font-family: Arial, sans-serif; color: #202124;">
+                        <t t-call="web.basic_layout">
+                            <div class="page" style="font-family: Arial, sans-serif; color: #202124; padding: 24px;">
 
                                 <!-- Cabecera -->
                                 <table width="100%" style="margin-bottom: 24px;">
                                     <tr>
                                         <td>
                                             <img src="/chat_umayor/static/src/logo_umayor.png" alt="Banco UMayor" style="height: 48px; display: block; margin-bottom: 4px;"/>
+                                            <div style="font-size: 11px; font-weight: bold; color: #333;">Banco UMayor</div>
                                             <div style="color: #777; font-size: 10px;">Proyecto académico — valores ficticios</div>
                                         </td>
                                         <td style="text-align: right;">
@@ -148,6 +149,7 @@
                     </t>
                 </t>
             </t>
+
         </field>
     </record>
 
