@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="param_gemini_model" model="ir.config_parameter">
+            <field name="key">chat_umayor.gemini_model</field>
+            <field name="value">gemini-2.0-flash</field>
+        </record>
+    </data>
+</odoo>
