@@ -13,9 +13,11 @@
         'views/report_contract.xml',
         'views/res_config_settings_views.xml',
         'views/assets.xml',
+        'views/website_homepage.xml',
     ],
     'assets': {
         'web.assets_frontend': [
+            'chat_umayor/static/src/css/website_umayor.css',
             'chat_umayor/static/src/css/chatbot.css',
             'chat_umayor/static/src/css/chatbot_extras.css',
             'chat_umayor/static/src/js/chatbot.js',
