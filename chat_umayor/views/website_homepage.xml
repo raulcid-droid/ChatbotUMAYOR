@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Hereda la página de inicio del website de Odoo y la reemplaza completamente -->
+    <template id="website_homepage" name="Homepage Banco UMayor" inherit_id="website.homepage">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            <div id="wrap">
+                <div class="browser-frame">
+                    <main class="page">
+
+                        <!-- NAVBAR -->
+                        <header class="um-navbar">
+                            <a href="/" class="logo" aria-label="Banco UMayor">
+                                <span class="logo__mark">
+                                    <span></span>
+                                </span>
+                                <span class="logo__text">
+                                    <small>BANCO</small>
+                                    <strong>UMAYOR</strong>
+                                </span>
+                            </a>
+                            <nav class="navbar__menu" aria-label="Navegación principal">
+                                <a class="navbar__link navbar__link--active" href="/">Inicio</a>
+                                <a class="navbar__link" href="#productos">Productos</a>
+                                <a class="navbar__link" href="#">Beneficios</a>
+                                <a class="navbar__link" href="#">Ayuda</a>
+                            </nav>
+                            <a href="#" class="button button--nav">
+                                <span class="button__icon">♙</span>
+                                Hazte cliente
+                            </a>
+                        </header>
+
+                        <!-- HERO -->
+                        <section class="hero">
+                            <div class="hero__content">
+                                <div class="eyebrow">
+                                    <span class="eyebrow__icon">↗</span>
+                                    100% DIGITAL
+                                    <span class="eyebrow__dot"></span>
+                                    HECHO EN CHILE
+                                </div>
+                                <h1 class="hero__title">
+                                    Tu banco digital,
+                                    <br/>
+                                    simple, seguro y
+                                    <br/>
+                                    siempre contigo
+                                </h1>
+                                <p class="hero__description">
+                                    Soluciones financieras modernas pensadas para ti.
+                                    <br/>
+                                    En Banco UMayor, tu confianza nos mueve.
+                                </p>
+                                <div class="hero__actions">
+                                    <a href="#" class="button button--primary">
+                                        Abrir cuenta
+                                        <span>→</span>
+                                    </a>
+                                    <a href="#productos" class="button button--secondary">
+                                        Ver productos
+                                    </a>
+                                </div>
+                                <div class="hero__features">
+                                    <article class="feature">
+                                        <span class="feature__icon">⌑</span>
+                                        <p>Seguridad de<br/>nivel bancario
+                                        </p>
+                                    </article>
+                                    <article class="feature">
+                                        <span class="feature__icon">▯</span>
+                                        <p>100% digital,<br/>sin filas
+                                        </p>
+                                    </article>
+                                    <article class="feature">
+                                        <span class="feature__icon">◔</span>
+                                        <p>Atención experta<br/>24/7
+                                        </p>
+                                    </article>
+                                </div>
+                            </div>
+
+                            <div class="hero__visual" aria-hidden="true">
+                                <div class="city"></div>
+                                <div class="red-orbit"></div>
+
+                                <section class="dashboard">
+                                    <div class="dashboard__header">
+                                        <div>
+                                            <h2>¡Hola, Camila!</h2>
+                                            <p>Bienvenida a Banco UMayor</p>
+                                        </div>
+                                        <span class="dashboard__bell">♧</span>
+                                    </div>
+                                    <div class="balance-card">
+                                        <div>
+                                            <span>Saldo total</span>
+                                            <strong>$4.250.840</strong>
+                                            <small>Ver detalle de cuentas ›</small>
+                                        </div>
+                                        <div class="chart">
+                                            <span></span>
+                                        </div>
+                                    </div>
+                                    <div class="quick-actions">
+                                        <div>
+                                            <span>⇄</span>
+                                            <small>Transferir</small>
+                                        </div>
+                                        <div>
+                                            <span>▤</span>
+                                            <small>Pagar</small>
+                                        </div>
+                                        <div>
+                                            <span>▯</span>
+                                            <small>Carga tu<br/>celular
+                                            </small>
+                                        </div>
+                                        <div>
+                                            <span>•••</span>
+                                            <small>Más</small>
+                                        </div>
+                                    </div>
+                                    <div class="movements">
+                                        <div class="movements__top">
+                                            <h3>Movimientos recientes</h3>
+                                            <a href="#">Ver todos</a>
+                                        </div>
+                                        <article class="movement">
+                                            <span class="movement__icon">▣</span>
+                                            <div>
+                                                <strong>Supermercado Líder</strong>
+                                                <small>Compra</small>
+                                            </div>
+                                            <p>-$34.560
+                                                <small>Hoy, 11:23</small>
+                                            </p>
+                                        </article>
+                                        <article class="movement">
+                                            <span class="movement__icon">⇆</span>
+                                            <div>
+                                                <strong>Transferencia a María R.</strong>
+                                                <small>Transferencia</small>
+                                            </div>
+                                            <p>-$120.000
+                                                <small>Ayer, 18:45</small>
+                                            </p>
+                                        </article>
+                                        <article class="movement">
+                                            <span class="movement__icon movement__icon--green">✓
+                                            </span>
+                                            <div>
+                                                <strong>Abono de Remuneración</strong>
+                                                <small>Ingreso</small>
+                                            </div>
+                                            <p>+$850.000
+                                                <small>01 May, 09:15</small>
+                                            </p>
+                                        </article>
+                                    </div>
+                                </section>
+
+                                <section class="phone">
+                                    <div class="phone__screen">
+                                        <div class="phone__status"></div>
+                                        <div class="phone__logo">
+                                            <span class="phone__logo-mark"></span>
+                                            <strong>BANCO<br/>UMAYOR
+                                            </strong>
+                                        </div>
+                                        <div class="card-mini">
+                                            <span>Tarjeta Débito</span>
+                                            <strong>•••• 4567</strong>
+                                            <i></i>
+                                        </div>
+                                        <div class="phone__balance">
+                                            <small>Saldo disponible</small>
+                                            <strong>$1.250.000</strong>
+                                            <span>Cuenta Corriente</span>
+                                        </div>
+                                        <button class="phone__button">
+                                            Bloquear tarjeta
+                                            <span>▣</span>
+                                        </button>
+                                        <div class="phone__nav">
+                                            <span class="phone__nav-active">⌂
+                                                <small>Inicio</small>
+                                            </span>
+                                            <span>□
+                                                <small>Productos</small>
+                                            </span>
+                                            <span>◇
+                                                <small>Pagos</small>
+                                            </span>
+                                            <span>○
+                                                <small>Perfil</small>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </section>
+                            </div>
+                        </section>
+
+                        <!-- PRODUCTOS -->
+                        <section class="products" id="productos">
+                            <div class="section-heading">
+                                <span>PRODUCTOS DESTACADOS</span>
+                                <h2>Soluciones que se adaptan a ti</h2>
+                            </div>
+                            <div class="products__grid">
+                                <article class="product-card product-card--soap">
+                                    <div class="product-card__art">
+                                        <div class="product-card__circle">
+                                            <span class="shield-icon">
+                                                <span></span>
+                                            </span>
+                                        </div>
+                                        <div class="car-line"></div>
+                                    </div>
+                                    <div class="product-card__content">
+                                        <span class="pill">SEGURO</span>
+                                        <h3>SOAP</h3>
+                                        <h4>Seguro Obligatorio de<br/>Accidentes Personales
+                                        </h4>
+                                        <p>Contrátalo 100% online en minutos y obtén tu certificado
+                                            al instante.
+                                        </p>
+                                        <ul>
+                                            <li>Emisión inmediata</li>
+                                            <li>Pago seguro</li>
+                                            <li>Válido en todo Chile</li>
+                                        </ul>
+                                        <a href="#">Contratar SOAP
+                                            <span>→</span>
+                                        </a>
+                                    </div>
+                                </article>
+                                <article class="product-card product-card--deposit">
+                                    <div class="product-card__art">
+                                        <div class="product-card__circle">
+                                            <span class="bars">
+                                                <i></i>
+                                                <i></i>
+                                                <i></i>
+                                                <i></i>
+                                            </span>
+                                        </div>
+                                        <div class="coins">
+                                            <span></span>
+                                            <span></span>
+                                            <span></span>
+                                            <i></i>
+                                        </div>
+                                    </div>
+                                    <div class="product-card__content">
+                                        <span class="pill">AHORRO E INVERSIÓN</span>
+                                        <h3>Depósito a Plazo</h3>
+                                        <p>Haz crecer tus ahorros con seguridad y tasas
+                                            competitivas.
+                                        </p>
+                                        <ul>
+                                            <li>Tasas atractivas</li>
+                                            <li>Plazos flexibles</li>
+                                            <li>100% digital</li>
+                                        </ul>
+                                        <a href="#">Conocer más
+                                            <span>→</span>
+                                        </a>
+                                    </div>
+                                </article>
+                            </div>
+                        </section>
+
+                        <!-- TRUST -->
+                        <section class="trust">
+                            <div class="trust__intro">
+                                <strong>Un banco digital</strong>
+                                <span>en el que puedes confiar</span>
+                            </div>
+                            <div class="trust__item">
+                                <span>◎</span>
+                                <div>
+                                    <strong>+350.000</strong>
+                                    <small>Clientes felices</small>
+                                </div>
+                            </div>
+                            <div class="trust__item">
+                                <span>⌑</span>
+                                <div>
+                                    <strong>99,9%</strong>
+                                    <small>Uptime de nuestra plataforma</small>
+                                </div>
+                            </div>
+                            <div class="trust__item">
+                                <span>▣</span>
+                                <div>
+                                    <strong>Banking grade</strong>
+                                    <small>Seguridad y protección de tus datos</small>
+                                </div>
+                            </div>
+                            <div class="trust__item">
+                                <span>CMF</span>
+                                <div>
+                                    <strong>Entidad fiscalizada</strong>
+                                    <small>Por la Comisión para el Mercado Financiero</small>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- FOOTER -->
+                        <footer class="um-footer">
+                            <p>Respaldo y seguridad que nos avalan</p>
+                            <div class="footer__badges">
+                                <span>CMF
+                                    <br/>
+                                    <small>Comisión para el Mercado Financiero</small>
+                                </span>
+                                <span>SBIF
+                                    <br/>
+                                    <small>Sistema de Bancos e Instituciones Financieras</small>
+                                </span>
+                                <span>▣ DEPÓSITOS ASEGURADOS
+                                    <br/>
+                                    <small>Hasta UF 3.000 por depositante</small>
+                                </span>
+                                <span>✓ Norton
+                                    <br/>
+                                    <small>Secured</small>
+                                </span>
+                                <span>ISO 27001
+                                    <br/>
+                                    <small>Gestión de Seguridad de la Información</small>
+                                </span>
+                            </div>
+                        </footer>
+
+                    </main>
+                </div>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Ocultar header y footer nativos de Odoo en la homepage -->
+    <template id="website_homepage_hide_odoo_chrome" name="Hide Odoo Chrome on Homepage"
+              inherit_id="website.layout">
+        <xpath expr="//header" position="attributes">
+            <attribute name="t-attf-style">
+                #{request.params.get('path','') in ('/',) and 'display:none!important' or ''}
+            </attribute>
+        </xpath>
+    </template>
+
+</odoo>
