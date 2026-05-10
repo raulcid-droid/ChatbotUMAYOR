@@ -84,6 +84,24 @@ button, input, textarea { font: inherit; }
     min-height: 64px;
 }
 
+/* Navbar personalizado (clase usada en el HTML) */
+.um-navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    gap: 12px;
+    padding: 12px 0;
+    min-height: 64px;
+    position: relative;
+    z-index: 2;
+}
+
+.um-navbar .button--nav {
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
 .logo { display: inline-flex; align-items: center; gap: 10px; }
 
 .logo__mark { position: relative; width: 44px; height: 40px; flex-shrink: 0; }

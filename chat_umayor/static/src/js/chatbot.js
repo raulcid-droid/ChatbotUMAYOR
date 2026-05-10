@@ -71,18 +71,28 @@
         send.addEventListener("click", sendMessage);
         input.addEventListener("keydown", (e) => { if (e.key === "Enter") sendMessage(); });
 
-        // Animación de atención: pulso + tooltip después de 4 segundos
+        // Animación de atención: pulso + tooltip después de 2 segundos
         const attentionTimer = setTimeout(() => {
             fab.classList.add("chatbot-fab--pulse");
             showTooltip();
-        }, 4000);
+        }, 2000);
+
+        // Shake periódico cada 12 segundos si el chat está cerrado
+        const shakeInterval = setInterval(() => {
+            if (window_.style.display === "none") {
+                fab.classList.remove("chatbot-fab--shake");
+                void fab.offsetWidth; // reflow para reiniciar la animación
+                fab.classList.add("chatbot-fab--shake");
+                setTimeout(() => fab.classList.remove("chatbot-fab--shake"), 750);
+            }
+        }, 12000);
 
         function toggle(open) {
             window_.style.display = open ? "flex" : "none";
             if (open) {
-                // Quitar animación de atención al abrir
-                fab.classList.remove("chatbot-fab--pulse");
+                fab.classList.remove("chatbot-fab--pulse", "chatbot-fab--shake");
                 clearTimeout(attentionTimer);
+                clearInterval(shakeInterval);
                 removeTooltip();
                 input.focus();
             }
