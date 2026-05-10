@@ -698,10 +698,11 @@ class ChatUmayorController(Controller):
                 return Response("Error generando contrato.", status=500)
 
         try:
-            report = (
-                request.env.ref("chat_umayor.action_report_contract").sudo()
+            Report = request.env["ir.actions.report"].sudo()
+            pdf_content, _mime = Report._render_qweb_pdf(
+                "chat_umayor.action_report_contract",
+                res_ids=contract.ids,
             )
-            pdf_content, _mime = report._render_qweb_pdf(contract.ids)
         except Exception:
             _logger.exception(
                 "Error generando PDF para contrato %s", contract.id
