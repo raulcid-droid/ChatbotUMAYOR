@@ -479,13 +479,18 @@ class ChatbotSession(models.Model):
                 return existing, existing._get_sign_url()
             if existing.state == "signed":
                 raise UserError(_("El contrato ya fue firmado."))
-            raise UserError(
-                _(
-                    "Existe un contrato en estado %(state)s para esta "
-                    "sesión; no se puede relanzar la firma."
+            if existing.state == "cancelled":
+                # Contrato cancelado por error previo: lo eliminamos
+                # para permitir reintento limpio.
+                existing.unlink()
+            else:
+                raise UserError(
+                    _(
+                        "Existe un contrato en estado %(state)s para esta "
+                        "sesión; no se puede relanzar la firma."
+                    )
+                    % {"state": existing.state}
                 )
-                % {"state": existing.state}
-            )
 
         if not self.submit_summary:
             raise UserError(
@@ -553,23 +558,40 @@ class ChatbotSession(models.Model):
             }
         )
 
-        # 3. Crear sign.request con la plantilla. La estructura exacta
-        # (request_item_ids, signers_count, etc.) varía entre versiones
-        # de Odoo; documento aquí lo mínimo y se ajusta en staging si
-        # rompe. Referencias a validar: sign/models/sign_request.py en
-        # Odoo 19.
+        # 3. Crear sign.request con la plantilla y firmantes.
+        # Odoo Sign exige al menos un sign.request.item (firmante).
+        # Obtenemos los roles únicos de los sign.item de la plantilla
+        # y creamos un request.item por rol con el partner como firmante.
         try:
+            sign_items = template.sign_item_ids
+            roles = sign_items.mapped("responsible_id")
+
+            if not roles:
+                raise UserError(
+                    _(
+                        "La plantilla de firma no tiene campos de firma "
+                        "configurados. Abre la plantilla en Odoo Sign, "
+                        "dibuja al menos un bloque de firma y guarda."
+                    )
+                )
+
+            request_item_vals = [
+                (0, 0, {"partner_id": partner.id, "role_id": role.id})
+                for role in roles
+            ]
+
             sign_request_vals = {
                 "template_id": template.id,
                 "reference": contract.reference or _("Contrato UMayor"),
+                "request_item_ids": request_item_vals,
             }
             sign_request = (
                 self.env["sign.request"].sudo().create(sign_request_vals)
             )
+        except UserError:
+            contract.state = "cancelled"
+            raise
         except Exception as exc:
-            # Si la creación del sign.request falla (plantilla mal
-            # configurada, permisos, etc.) cancelamos el contrato
-            # para no dejar basura en 'draft' y propagamos.
             _logger.exception(
                 "Error creando sign.request para contrato %s", contract.id
             )
