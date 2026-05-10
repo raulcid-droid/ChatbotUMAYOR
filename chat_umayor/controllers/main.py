@@ -281,7 +281,8 @@ class ChatUmayorController(Controller):
             except LLMUnavailable:
                 # Guardamos el canned como turno del asistente para que
                 # el historial no quede "desbalanceado" (user sin
-                # assistant). El estado no avanza.
+                # assistant). La transición FSM sí avanza: se basa en
+                # el texto del usuario, no en la respuesta del LLM.
                 Message.create(
                     {
                         "session_id": session.id,
@@ -289,6 +290,7 @@ class ChatUmayorController(Controller):
                         "content": CANNED_LLM_FALLBACK,
                     }
                 )
+                self._apply_transition(session, content)
                 return _err(
                     "LLM_UNAVAILABLE",
                     "El asistente no está disponible en este momento. "

@@ -182,15 +182,6 @@
       }
       if (data.state === "data_collection") {
         renderDataForm(data.product_code || detectProduct(data.reply));
-      } else if (
-        data.state !== "review" &&
-        data.state !== "signing" &&
-        /formulario|tus datos/i.test(data.reply || "")
-      ) {
-        // Fallback: el bot menciona el formulario pero el estado aún
-        // no cambió en el FSM (ej. latencia o error de transición).
-        sessionState.currentState = "data_collection";
-        renderDataForm(data.product_code || detectProduct(data.reply));
       }
       if (data.state === "review") {
         // Caso borde: el backend pasó a 'review' por mensaje sin
@@ -203,6 +194,17 @@
         (response && response.error && response.error.message) ||
         "El asistente no respondió. Intenta nuevamente.";
       appendMessage(errMsg, "bot");
+
+      // Aunque el LLM falle, el FSM del servidor sí avanza.
+      // Leemos el estado real para mostrar el formulario si corresponde.
+      if (response && response.error) {
+        const err = response.error;
+        if (err.state) sessionState.currentState = err.state;
+        if (err.product_code) sessionState.currentProduct = err.product_code;
+        if (err.state === "data_collection") {
+          renderDataForm(err.product_code || sessionState.currentProduct);
+        }
+      }
     }
 
     // 6. Logueamos el tiempo (útil para Punto 6)
