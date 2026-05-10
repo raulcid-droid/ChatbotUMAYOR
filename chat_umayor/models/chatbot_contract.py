@@ -123,6 +123,24 @@ class ChatbotContract(models.Model):
     )
 
     # ------------------------------------------------------------------
+    # Helpers para QWeb (evita parsear JSON en la plantilla)
+    # ------------------------------------------------------------------
+
+    def _product_data(self) -> dict:
+        try:
+            import json
+            return json.loads(self.product_data_json or "{}")
+        except Exception:
+            return {}
+
+    def _calculated_data(self) -> dict:
+        try:
+            import json
+            return json.loads(self.calculated_json or "{}")
+        except Exception:
+            return {}
+
+    # ------------------------------------------------------------------
     # Estado y metadatos
     # ------------------------------------------------------------------
 

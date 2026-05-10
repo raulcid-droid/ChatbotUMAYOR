@@ -55,7 +55,7 @@ class ChatbotSession(models.Model):
         "discovery": ("product_info",),
         "product_info": ("discovery", "data_collection"),
         "data_collection": ("review",),
-        "review": ("signing",),
+        "review": ("signing", "closed"),
         "signing": ("closed",),
         "closed": (),
     }

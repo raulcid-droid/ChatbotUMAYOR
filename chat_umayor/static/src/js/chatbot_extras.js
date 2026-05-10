@@ -554,11 +554,11 @@
             <button type="button" class="cu-sign-btn" disabled="disabled">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"
                      style="vertical-align: middle; margin-right: 6px">
-                    <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
                 </svg>
-                Firmar contrato
+                Descargar contrato PDF
             </button>
-            <p class="cu-sign-help">Te abriremos el documento en una pestaña segura.</p>
+            <p class="cu-sign-help">Se descargará el contrato en formato PDF.</p>
         `;
 
     // Habilitar el botón de firma solo cuando el checkbox esté marcado
@@ -573,56 +573,22 @@
     msgsEl.scrollTop = msgsEl.scrollHeight;
   }
 
-  async function launchSign() {
-    const wrap =
-      document.querySelector(".cu-review") ||
-      document.querySelector(".cu-sign");
-    if (wrap) {
-      const btn = wrap.querySelector(".cu-sign-btn");
-      if (btn) {
-        btn.disabled = true;
-        btn.textContent = "Procesando...";
-      }
+  function launchSign() {
+    const wrap = document.querySelector(".cu-review") || document.querySelector(".cu-sign");
+    const btn = wrap ? wrap.querySelector(".cu-sign-btn") : null;
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Descargando...";
     }
 
-    let response;
-    try {
-      if (sessionState.demoMode) {
-        response = await demoSign();
-      } else {
-        response = await callEndpoint(
-          ENDPOINTS.sign(sessionState.sessionId),
-          {},
-        );
-      }
-    } catch (err) {
-      response = { ok: false, error: { message: "Error al iniciar firma." } };
-    }
+    // Abre el PDF directamente — el navegador lo descarga
+    const pdfUrl = `/chat_umayor/session/${sessionState.sessionId}/contrato.pdf`;
+    window.open(pdfUrl, "_blank", "noopener");
 
-    if (response && response.ok && response.data && response.data.sign_url) {
-      appendMessage("Te llevamos al documento de firma.", "bot");
-      window.open(response.data.sign_url, "_blank", "noopener");
-      if (wrap) wrap.remove();
-    } else {
-      const errMsg =
-        (response && response.error && response.error.message) ||
-        "No se pudo iniciar la firma.";
-      appendMessage(errMsg, "bot");
-      if (wrap) {
-        const btn = wrap.querySelector(".cu-sign-btn");
-        if (btn) {
-          btn.disabled = false;
-          // Restauramos el contenido original (icono + texto)
-          btn.innerHTML = `
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"
-                             style="vertical-align: middle; margin-right: 6px">
-                            <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
-                        </svg>
-                        Firmar contrato
-                    `;
-        }
-      }
-    }
+    appendMessage("✓ Tu contrato PDF se está descargando. ¡Gracias por contratar con Banco UMayor!", "bot");
+    unlockChatInput();
+    if (wrap) wrap.remove();
   }
 
   // ---------------------------------------------------------------

@@ -10,6 +10,7 @@
         'data/system_prompt.xml',
         'data/products.xml',
         'data/config.xml',
+        'views/report_contract.xml',
         'views/res_config_settings_views.xml',
         'views/assets.xml',
     ],

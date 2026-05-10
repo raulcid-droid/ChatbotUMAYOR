@@ -26,7 +26,7 @@ import logging
 import re
 
 from odoo.exceptions import UserError
-from odoo.http import Controller, request, route
+from odoo.http import Controller, request, route, Response
 
 from odoo.addons.chat_umayor.services.gemini_client import (
     GeminiClient,
@@ -637,6 +637,89 @@ class ChatUmayorController(Controller):
                 "Error no controlado en /sign sesión %s", session_id
             )
             return _err("INTERNAL_ERROR", "Ocurrió un problema interno.")
+
+    # ------------------------------------------------------------------
+    # /session/<id>/contrato.pdf — descarga del contrato en PDF
+    # ------------------------------------------------------------------
+
+    @route(
+        "/chat_umayor/session/<int:session_id>/contrato.pdf",
+        type="http",
+        auth="public",
+        methods=["GET"],
+        csrf=False,
+    )
+    def session_contract_pdf(self, session_id, **kwargs):
+        """Genera y devuelve el contrato como PDF descargable.
+
+        Crea el contrato si no existe, genera el PDF con el reporte
+        QWeb y cierra la sesión. Reemplaza el flujo de Odoo Sign.
+        """
+        session = (
+            request.env["chatbot.session"].sudo().browse(session_id).exists()
+        )
+        if not session or not session.submit_summary:
+            return request.not_found()
+
+        Contract = request.env["chat_umayor.contract"].sudo()
+        contract = Contract.search(
+            [("session_id", "=", session.id)], limit=1
+        )
+
+        if not contract:
+            try:
+                summary = json.loads(session.submit_summary)
+                partner = session.partner_id
+                contract = Contract.create(
+                    {
+                        "session_id": session.id,
+                        "partner_id": partner.id,
+                        "partner_name": partner.name,
+                        "partner_vat": partner.vat or "",
+                        "partner_email": partner.email or False,
+                        "partner_phone": partner.phone or False,
+                        "product_code": summary["product_code"],
+                        "product_data_json": json.dumps(
+                            summary["product_data"], ensure_ascii=False
+                        ),
+                        "calculated_json": json.dumps(
+                            summary["calculated"], ensure_ascii=False
+                        ),
+                        "state": "signed",
+                    }
+                )
+                # Cerrar la sesión directamente desde review
+                if session.state == "review":
+                    session._do_transition("closed")
+            except Exception:
+                _logger.exception(
+                    "Error creando contrato para sesión %s", session_id
+                )
+                return Response("Error generando contrato.", status=500)
+
+        try:
+            report = (
+                request.env.ref("chat_umayor.action_report_contract").sudo()
+            )
+            pdf_content, _mime = report._render_qweb_pdf(contract.ids)
+        except Exception:
+            _logger.exception(
+                "Error generando PDF para contrato %s", contract.id
+            )
+            return Response("Error generando PDF.", status=500)
+
+        filename = f"Contrato_{contract.reference}.pdf"
+        return request.make_response(
+            pdf_content,
+            headers=[
+                ("Content-Type", "application/pdf"),
+                (
+                    "Content-Disposition",
+                    f'attachment; filename="{filename}"',
+                ),
+                ("Content-Length", str(len(pdf_content))),
+            ],
+        )
 
     # ------------------------------------------------------------------
     # /session/<id>/state — polling ligero
