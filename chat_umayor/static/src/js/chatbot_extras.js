@@ -31,6 +31,7 @@
   const sessionState = {
     sessionId: null,
     currentState: "greeting",
+    currentProduct: null,
     demoMode: false, // se activa solo si los endpoints fallan
   };
 
@@ -121,6 +122,10 @@
     const text = inputEl.value.trim();
     if (!text) return;
 
+    // Impide que chatbot.js (bubble phase) también procese el evento,
+    // evitando llamadas duplicadas al endpoint antiguo /chat_umayor/message.
+    if (ev && ev.stopImmediatePropagation) ev.stopImmediatePropagation();
+
     isHandlingSend = true;
     try {
       await sendUserMessage(text);
@@ -169,12 +174,22 @@
 
       // Actualizamos el estado conversacional
       if (data.state) sessionState.currentState = data.state;
+      if (data.product_code) sessionState.currentProduct = data.product_code;
 
       // Renderizamos extras según el contrato
       if (data.suggestions && data.suggestions.length > 0) {
         renderSuggestions(data.suggestions);
       }
       if (data.state === "data_collection") {
+        renderDataForm(data.product_code || detectProduct(data.reply));
+      } else if (
+        data.state !== "review" &&
+        data.state !== "signing" &&
+        /formulario|tus datos/i.test(data.reply || "")
+      ) {
+        // Fallback: el bot menciona el formulario pero el estado aún
+        // no cambió en el FSM (ej. latencia o error de transición).
+        sessionState.currentState = "data_collection";
         renderDataForm(data.product_code || detectProduct(data.reply));
       }
       if (data.state === "review") {
@@ -253,69 +268,191 @@
     const isSoap = (productCode || "").toLowerCase() === "soap";
     const isDeposit = (productCode || "").toLowerCase() === "deposit";
 
+    // Plazos válidos del backend (product_deposit.py _RATES_BY_TERM)
+    const DEPOSIT_TERMS = [
+      { days: 30,  rate: 3,   label: "30 días" },
+      { days: 60,  rate: 3.5, label: "60 días" },
+      { days: 90,  rate: 4,   label: "90 días" },
+      { days: 180, rate: 4.5, label: "6 meses" },
+      { days: 365, rate: 5,   label: "1 año"   },
+    ];
+
+    const depositSection = isDeposit ? `
+      <div class="cu-form-divider cu-deposit-divider">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+          <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85
+                   1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16
+                   c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6
+                   3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2
+                   c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55
+                   0-2.84-2.43-3.81-4.7-4.4z"/>
+        </svg>
+        Configuración del Depósito
+      </div>
+      <div class="cu-form-row">
+        <label>¿Cuánto quieres depositar?</label>
+        <div class="cu-amount-wrap">
+          <span class="cu-amount-symbol">$</span>
+          <input type="text" name="amount_fmt" class="cu-amount-input"
+                 placeholder="2.000.000" inputmode="numeric" autocomplete="off" />
+          <input type="hidden" name="amount" />
+        </div>
+        <span class="cu-amount-hint">Mín. $50.000 — Máx. $100.000.000</span>
+      </div>
+      <div class="cu-form-row">
+        <label>Plazo del depósito</label>
+        <div class="cu-term-grid">
+          ${DEPOSIT_TERMS.map(t => `
+            <button type="button" class="cu-term-btn" data-days="${t.days}" data-rate="${t.rate}">
+              <span class="cu-term-label">${t.label}</span>
+              <span class="cu-term-rate">${t.rate}% anual</span>
+            </button>`).join("")}
+        </div>
+        <input type="hidden" name="term_days" />
+      </div>
+      <div class="cu-deposit-preview" style="display:none">
+        <div class="cu-deposit-preview-row">
+          <span>Capital</span><span class="cu-prev-principal">—</span>
+        </div>
+        <div class="cu-deposit-preview-row">
+          <span>Intereses estimados</span><span class="cu-prev-interest cu-prev-green">—</span>
+        </div>
+        <div class="cu-deposit-preview-total">
+          <span>Recibirás al vencimiento</span>
+          <strong class="cu-prev-total">—</strong>
+        </div>
+      </div>` : "";
+
+    const soapSection = isSoap ? `
+      <div class="cu-form-divider">Datos del vehículo</div>
+      <div class="cu-form-row">
+        <label>Patente</label>
+        <input type="text" name="vehicle_plate" required="required" placeholder="ABCD12" />
+      </div>
+      <div class="cu-form-row">
+        <label>Año</label>
+        <input type="number" name="vehicle_year" required="required" min="1950" max="2027" />
+      </div>
+      <div class="cu-form-row">
+        <label>Tipo de vehículo</label>
+        <select name="vehicle_type" required="required">
+          <option value="">Selecciona...</option>
+          <option value="particular">Particular — $7.990</option>
+          <option value="moto">Moto — $3.990</option>
+          <option value="comercial">Comercial — $14.990</option>
+          <option value="taxi">Taxi — $24.990</option>
+        </select>
+      </div>` : "";
+
     const form = document.createElement("form");
     form.className = "cu-extras cu-form";
     form.innerHTML = `
-            <div class="cu-form-title">Completa tus datos</div>
-            <div class="cu-form-row">
-                <label>Nombre completo</label>
-                <input type="text" name="name" required="required" />
-            </div>
-            <div class="cu-form-row">
-                <label>RUT / Documento</label>
-                <input type="text" name="document_id" required="required" placeholder="12.345.678-9" />
-            </div>
-            <div class="cu-form-row">
-                <label>Email</label>
-                <input type="email" name="email" required="required" />
-            </div>
-            <div class="cu-form-row">
-                <label>Teléfono</label>
-                <input type="tel" name="phone" placeholder="+56 9 ..." />
-            </div>
-            ${
-              isSoap
-                ? `
-                <div class="cu-form-divider">Datos del vehículo</div>
-                <div class="cu-form-row">
-                    <label>Patente</label>
-                    <input type="text" name="vehicle_plate" required="required" placeholder="ABCD12" />
-                </div>
-                <div class="cu-form-row">
-                    <label>Año</label>
-                    <input type="number" name="vehicle_year" required="required" min="1950" max="2027" />
-                </div>
-                <div class="cu-form-row">
-                    <label>Tipo de vehículo</label>
-                    <select name="vehicle_type" required="required">
-                        <option value="">Selecciona...</option>
-                        <option value="particular">Particular — $7.990</option>
-                        <option value="moto">Moto — $3.990</option>
-                        <option value="comercial">Comercial — $14.990</option>
-                        <option value="taxi">Taxi — $24.990</option>
-                    </select>
-                </div>
-            `
-                : ""
-            }
-            ${
-              isDeposit
-                ? `
-                <div class="cu-form-divider">Datos del depósito</div>
-                <div class="cu-form-row">
-                    <label>Monto (CLP)</label>
-                    <input type="number" name="amount" required="required" min="100000" />
-                </div>
-                <div class="cu-form-row">
-                    <label>Plazo (días)</label>
-                    <input type="number" name="term_days" required="required" min="30" max="365" />
-                </div>
-            `
-                : ""
-            }
-            <button type="submit" class="cu-form-submit">Enviar datos</button>
-            <div class="cu-form-error" style="display:none"></div>
-        `;
+      <div class="cu-form-title">
+        Completa tus datos
+        <button type="button" class="cu-demo-fill" title="Rellenar con datos de prueba">Demo ▶</button>
+      </div>
+      <div class="cu-form-row">
+        <label>Nombre completo</label>
+        <input type="text" name="name" required="required" />
+      </div>
+      <div class="cu-form-row">
+        <label>RUT</label>
+        <input type="text" name="document_id" required="required" placeholder="12.345.678-9" />
+      </div>
+      <div class="cu-form-row">
+        <label>Email</label>
+        <input type="email" name="email" required="required" />
+      </div>
+      <div class="cu-form-row">
+        <label>Teléfono</label>
+        <input type="tel" name="phone" placeholder="+56 9 ..." />
+      </div>
+      ${soapSection}
+      ${depositSection}
+      <button type="submit" class="cu-form-submit">Enviar datos</button>
+      <div class="cu-form-error" style="display:none"></div>
+    `;
+
+    // ── Botón Demo ▶ (datos según producto) ──────────────────────────
+    form.querySelector(".cu-demo-fill").addEventListener("click", () => {
+      const common = {
+        name: "Jonathan Pérez Demo",
+        document_id: "12.345.678-9",
+        email: "demo@bancoumayor.cl",
+        phone: "+56 9 1234 5678",
+      };
+      Object.entries(common).forEach(([n, v]) => {
+        const el = form.querySelector(`[name="${n}"]`);
+        if (el) el.value = v;
+      });
+      if (isSoap) {
+        const soap = { vehicle_plate: "ABCD12", vehicle_year: "2022", vehicle_type: "particular" };
+        Object.entries(soap).forEach(([n, v]) => {
+          const el = form.querySelector(`[name="${n}"]`);
+          if (el) el.value = v;
+        });
+      }
+      if (isDeposit) {
+        // Rellena $2.000.000 y hace clic en el chip de 90 días
+        const amtFmt = form.querySelector('[name="amount_fmt"]');
+        const amtHid = form.querySelector('[name="amount"]');
+        if (amtFmt) amtFmt.value = "2.000.000";
+        if (amtHid) amtHid.value = "2000000";
+        const chip90 = form.querySelector('.cu-term-btn[data-days="90"]');
+        if (chip90) chip90.click();
+      }
+    });
+
+    // ── Lógica interactiva del depósito ──────────────────────────────
+    if (isDeposit) {
+      const amtFmtInput = form.querySelector('[name="amount_fmt"]');
+      const amtHidInput = form.querySelector('[name="amount"]');
+      const termHidInput = form.querySelector('[name="term_days"]');
+      const preview = form.querySelector(".cu-deposit-preview");
+      const prevPrincipal = form.querySelector(".cu-prev-principal");
+      const prevInterest = form.querySelector(".cu-prev-interest");
+      const prevTotal = form.querySelector(".cu-prev-total");
+      let selectedDays = 0;
+      let selectedRate = 0;
+
+      function parseAmount(str) {
+        return parseInt((str || "").replace(/\D/g, ""), 10) || 0;
+      }
+
+      function updatePreview() {
+        const amount = parseAmount(amtFmtInput ? amtFmtInput.value : "");
+        if (!amount || !selectedDays) { if (preview) preview.style.display = "none"; return; }
+        const interest = Math.round(amount * (selectedRate / 100) * selectedDays / 360);
+        const total = amount + interest;
+        if (prevPrincipal) prevPrincipal.textContent = formatCLP(amount);
+        if (prevInterest) prevInterest.textContent = "+" + formatCLP(interest);
+        if (prevTotal) prevTotal.textContent = formatCLP(total);
+        if (preview) preview.style.display = "block";
+      }
+
+      // Formateo en tiempo real del monto
+      if (amtFmtInput) {
+        amtFmtInput.addEventListener("input", () => {
+          const raw = parseAmount(amtFmtInput.value);
+          amtFmtInput.value = raw ? raw.toLocaleString("es-CL") : "";
+          if (amtHidInput) amtHidInput.value = raw || "";
+          updatePreview();
+        });
+      }
+
+      // Chips de plazo
+      form.querySelectorAll(".cu-term-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          form.querySelectorAll(".cu-term-btn").forEach((b) => b.classList.remove("cu-term-btn--active"));
+          btn.classList.add("cu-term-btn--active");
+          selectedDays = parseInt(btn.dataset.days, 10);
+          selectedRate = parseFloat(btn.dataset.rate);
+          if (termHidInput) termHidInput.value = selectedDays;
+          updatePreview();
+        });
+      });
+    }
+
     form.addEventListener("submit", async (ev) => {
       ev.preventDefault();
       await submitDataForm(form, productCode);
@@ -371,8 +508,26 @@
     // Normalizamos el RUT al formato estándar (sin puntos, con guión)
     const rutFormatted = rutValidation.formatted;
 
+    // Validaciones de producto específicas antes de enviar
+    const resolvedCode = productCode || sessionState.currentProduct || "soap";
+    if (resolvedCode === "deposit") {
+      const amountVal = data.get("amount");
+      const termVal = data.get("term_days");
+      if (!amountVal || parseFloat(amountVal) < 50000) {
+        errBox.textContent = "Ingresa un monto válido (mínimo $50.000).";
+        errBox.style.display = "block";
+        return;
+      }
+      const validTerms = [30, 60, 90, 180, 365];
+      if (!termVal || !validTerms.includes(parseInt(termVal, 10))) {
+        errBox.textContent = "Selecciona un plazo válido.";
+        errBox.style.display = "block";
+        return;
+      }
+    }
+
     const payload = {
-      product_code: productCode || "soap",
+      product_code: resolvedCode,
       partner: {
         name: data.get("name"),
         document_id: rutFormatted,
@@ -870,10 +1025,13 @@
 
   function detectProduct(replyText) {
     const t = (replyText || "").toLowerCase();
-    if (t.includes("soap") || t.includes("vehículo") || t.includes("vehiculo"))
+    if (t.includes("soap") || t.includes("vehículo") || t.includes("vehiculo") || t.includes("patente"))
       return "soap";
-    if (t.includes("depósito") || t.includes("deposito")) return "deposit";
-    return "soap";
+    if (t.includes("depósito") || t.includes("deposito") || t.includes("plazo") || t.includes("ahorro"))
+      return "deposit";
+    // Sin heurística clara: usar lo que guardó el sessionState
+    const stored = (sessionState.currentProduct || "").toLowerCase();
+    return stored || null;
   }
 
   function sleep(ms) {
@@ -915,6 +1073,7 @@
       unlockChatInput();
       sessionState.sessionId = null;
       sessionState.currentState = "greeting";
+      sessionState.currentProduct = null;
       sessionState.demoMode = false;
       startSession();
     },
