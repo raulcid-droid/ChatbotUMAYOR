@@ -243,7 +243,7 @@ class ChatbotSession(models.Model):
     # reemplaza en PLAN 08 por respuesta estructurada de Gemini (JSON).
     _INTENT_KEYWORDS_DISCOVERY_SOAP = ("soap", "seguro obligatorio")
     _INTENT_KEYWORDS_DISCOVERY_DEPOSIT = ("deposito", "plazo", "ahorro")
-    _INTENT_KEYWORDS_CONFIRM = ("si", "quiero", "contratar", "confirmo", "ok", "dale")
+    _INTENT_KEYWORDS_CONFIRM = ("si", "quiero", "contratar", "confirmo", "ok", "dale", "claro", "adelante", "vamos", "acepto", "sigamos", "perfecto", "hagamos")
     _INTENT_KEYWORDS_CHANGE = ("otro", "cambiar", "cambio")
     _INTENT_KEYWORDS_NEGATION = ("no ", "no,", "nunca", "tampoco")
 

@@ -182,6 +182,17 @@
       }
       if (data.state === "data_collection") {
         renderDataForm(data.product_code || detectProduct(data.reply));
+      } else if (
+        data.state !== "review" &&
+        data.state !== "signing" &&
+        data.state !== "closed" &&
+        /formulario|tus datos/i.test(data.reply || "")
+      ) {
+        // Red de seguridad: Gemini dice "formulario" pero el FSM aún
+        // no avanzó (keyword no cubierto). El backend avanzará en el
+        // próximo mensaje del usuario o cuando el submit tenga éxito.
+        sessionState.currentState = "data_collection";
+        renderDataForm(data.product_code || detectProduct(data.reply));
       }
       if (data.state === "review") {
         // Caso borde: el backend pasó a 'review' por mensaje sin
