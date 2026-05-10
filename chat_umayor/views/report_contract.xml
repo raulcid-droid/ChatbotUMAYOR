@@ -1,157 +1,162 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-<data>
 
-    <template id="report_contract_document">
-        <t t-call="web.html_container">
-            <t t-foreach="docs" t-as="doc">
-                <t t-set="pd" t-value="doc._product_data()"/>
-                <t t-set="calc" t-value="doc._calculated_data()"/>
-                <t t-set="is_soap" t-value="doc.product_code == 'soap'"/>
-                <div class="page" style="font-family: Arial, sans-serif; color: #202124; padding: 8px;">
+    <!-- Vista QWeb del reporte (ir.ui.view) -->
+    <record id="report_contract_view" model="ir.ui.view">
+        <field name="name">report.chat_umayor.contract</field>
+        <field name="type">qweb</field>
+        <field name="arch" type="xml">
+            <t t-name="chat_umayor.report_contract_document">
+                <t t-call="web.html_container">
+                    <t t-foreach="docs" t-as="doc">
+                        <t t-set="pd" t-value="doc._product_data()"/>
+                        <t t-set="calc" t-value="doc._calculated_data()"/>
+                        <t t-set="is_soap" t-value="doc.product_code == 'soap'"/>
+                        <t t-call="web.external_layout">
+                            <div class="page" style="font-family: Arial, sans-serif; color: #202124;">
 
-                    <!-- Cabecera -->
-                    <table width="100%" style="margin-bottom: 28px;">
-                        <tr>
-                            <td>
-                                <div style="color: #C1002B; font-size: 22px; font-weight: bold;">Banco UMayor</div>
-                                <div style="color: #555; font-size: 11px;">Banco ficticio académico — valores referenciales</div>
-                            </td>
-                            <td style="text-align: right;">
-                                <div style="font-size: 13px; color: #555;">Referencia</div>
-                                <div style="font-size: 20px; font-weight: bold; color: #C1002B;">
-                                    <t t-esc="doc.reference"/>
+                                <!-- Cabecera -->
+                                <table width="100%" style="margin-bottom: 24px;">
+                                    <tr>
+                                        <td>
+                                            <div style="color: #C1002B; font-size: 22px; font-weight: bold;">Banco UMayor</div>
+                                            <div style="color: #777; font-size: 10px;">Proyecto académico — valores ficticios</div>
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <div style="font-size: 11px; color: #777;">Referencia</div>
+                                            <div style="font-size: 18px; font-weight: bold; color: #C1002B;"><t t-esc="doc.reference"/></div>
+                                            <div style="font-size: 10px; color: #999;">
+                                                Fecha: <t t-esc="doc.create_date and doc.create_date.strftime('%d/%m/%Y') or ''"/>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <hr style="border: 2px solid #C1002B; margin-bottom: 18px;"/>
+
+                                <h2 style="text-align: center; color: #333; margin-bottom: 18px; font-size: 16px;">
+                                    CONTRATO DE SERVICIOS —
+                                    <t t-if="is_soap">SOAP (Seguro Obligatorio de Accidentes Personales)</t>
+                                    <t t-else="">Depósito a Plazo</t>
+                                </h2>
+
+                                <!-- Datos del cliente -->
+                                <div style="background: #f8f9fa; border-left: 4px solid #C1002B; padding: 10px 14px; margin-bottom: 16px;">
+                                    <div style="font-weight: bold; color: #C1002B; margin-bottom: 6px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Datos del Cliente</div>
+                                    <table width="100%" style="font-size: 12px;">
+                                        <tr>
+                                            <td width="35%" style="color: #666; padding: 2px 0;">Nombre</td>
+                                            <td><strong><t t-esc="doc.partner_name"/></strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color: #666; padding: 2px 0;">RUT</td>
+                                            <td><t t-esc="doc.partner_vat"/></td>
+                                        </tr>
+                                        <tr t-if="doc.partner_email">
+                                            <td style="color: #666; padding: 2px 0;">Email</td>
+                                            <td><t t-esc="doc.partner_email"/></td>
+                                        </tr>
+                                        <tr t-if="doc.partner_phone">
+                                            <td style="color: #666; padding: 2px 0;">Teléfono</td>
+                                            <td><t t-esc="doc.partner_phone"/></td>
+                                        </tr>
+                                    </table>
                                 </div>
-                                <div style="font-size: 11px; color: #777;">
-                                    Fecha: <t t-esc="doc.create_date and doc.create_date.strftime('%d/%m/%Y') or ''"/>
+
+                                <!-- Datos SOAP -->
+                                <t t-if="is_soap">
+                                    <div style="background: #f8f9fa; border-left: 4px solid #2E7D32; padding: 10px 14px; margin-bottom: 16px;">
+                                        <div style="font-weight: bold; color: #2E7D32; margin-bottom: 6px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Datos del Vehículo</div>
+                                        <table width="100%" style="font-size: 12px;">
+                                            <tr>
+                                                <td width="35%" style="color: #666; padding: 2px 0;">Patente</td>
+                                                <td><strong><t t-esc="pd.get('vehicle_plate', '—')"/></strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="color: #666; padding: 2px 0;">Año</td>
+                                                <td><t t-esc="str(pd.get('vehicle_year', '—'))"/></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="color: #666; padding: 2px 0;">Tipo</td>
+                                                <td><t t-esc="str(pd.get('vehicle_type', '—')).capitalize()"/></td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <table width="100%" style="margin-bottom: 20px; border: 1px solid #C1002B; border-radius: 4px;">
+                                        <tr>
+                                            <td style="padding: 12px 16px; font-size: 11px; color: #C1002B; font-weight: bold; text-transform: uppercase;">Prima Anual a Pagar</td>
+                                            <td style="padding: 12px 16px; text-align: right; font-size: 20px; font-weight: bold; color: #2E7D32;">
+                                                $<t t-esc="'{:,.0f}'.format(calc.get('premium', 0)).replace(',', '.')"/> CLP
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </t>
+
+                                <!-- Datos Depósito -->
+                                <t t-if="not is_soap">
+                                    <div style="background: #f8f9fa; border-left: 4px solid #2E7D32; padding: 10px 14px; margin-bottom: 16px;">
+                                        <div style="font-weight: bold; color: #2E7D32; margin-bottom: 6px; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px;">Datos del Depósito</div>
+                                        <table width="100%" style="font-size: 12px;">
+                                            <tr>
+                                                <td width="35%" style="color: #666; padding: 2px 0;">Monto</td>
+                                                <td><strong>$<t t-esc="'{:,.0f}'.format(pd.get('amount', 0)).replace(',', '.')"/> CLP</strong></td>
+                                            </tr>
+                                            <tr>
+                                                <td style="color: #666; padding: 2px 0;">Plazo</td>
+                                                <td><t t-esc="str(pd.get('term_days', '—'))"/> días</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                    <table width="100%" style="margin-bottom: 20px; border: 1px solid #C1002B; border-radius: 4px;">
+                                        <tr>
+                                            <td style="padding: 12px 16px; font-size: 11px; color: #C1002B; font-weight: bold; text-transform: uppercase;">Intereses Estimados</td>
+                                            <td style="padding: 12px 16px; text-align: right; font-size: 20px; font-weight: bold; color: #2E7D32;">
+                                                $<t t-esc="'{:,.0f}'.format(calc.get('interest', 0)).replace(',', '.')"/> CLP
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </t>
+
+                                <!-- Cláusulas -->
+                                <div style="font-size: 10px; color: #666; margin-bottom: 28px; line-height: 1.6; border-top: 1px solid #eee; padding-top: 12px;">
+                                    <strong>CLÁUSULAS:</strong>
+                                    <br/>1. Este contrato es de carácter académico y sus valores son ficticios.
+                                    <br/>2. El cliente declara que los datos son verídicos y acepta las condiciones del producto.
+                                    <br/>3. Documento generado automáticamente por el Asistente Virtual de Banco UMayor.
                                 </div>
-                            </td>
-                        </tr>
-                    </table>
 
-                    <hr style="border: 2px solid #C1002B; margin-bottom: 20px;"/>
+                                <!-- Firma -->
+                                <table width="100%" style="margin-top: 36px; font-size: 11px;">
+                                    <tr>
+                                        <td width="44%" style="text-align: center; border-top: 1px solid #333; padding-top: 6px;">
+                                            Firma del Cliente<br/>
+                                            <t t-esc="doc.partner_name"/><br/>
+                                            RUT: <t t-esc="doc.partner_vat"/>
+                                        </td>
+                                        <td width="12%"/>
+                                        <td width="44%" style="text-align: center; border-top: 1px solid #333; padding-top: 6px;">
+                                            Banco UMayor<br/>
+                                            Representante Autorizado<br/>
+                                            &#160;
+                                        </td>
+                                    </tr>
+                                </table>
 
-                    <h2 style="text-align: center; color: #333; margin-bottom: 20px;">
-                        CONTRATO DE SERVICIOS —
-                        <t t-if="is_soap">SOAP (Seguro Obligatorio de Accidentes Personales)</t>
-                        <t t-else="">Depósito a Plazo</t>
-                    </h2>
-
-                    <!-- Datos del cliente -->
-                    <div style="background: #f8f9fa; border-left: 4px solid #C1002B; padding: 12px 16px; margin-bottom: 18px;">
-                        <div style="font-weight: bold; color: #C1002B; margin-bottom: 8px; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Datos del Cliente</div>
-                        <table width="100%" style="font-size: 13px;">
-                            <tr>
-                                <td width="40%" style="color: #555; padding: 3px 0;">Nombre</td>
-                                <td><strong><t t-esc="doc.partner_name"/></strong></td>
-                            </tr>
-                            <tr>
-                                <td style="color: #555; padding: 3px 0;">RUT</td>
-                                <td><t t-esc="doc.partner_vat"/></td>
-                            </tr>
-                            <tr t-if="doc.partner_email">
-                                <td style="color: #555; padding: 3px 0;">Email</td>
-                                <td><t t-esc="doc.partner_email"/></td>
-                            </tr>
-                            <tr t-if="doc.partner_phone">
-                                <td style="color: #555; padding: 3px 0;">Teléfono</td>
-                                <td><t t-esc="doc.partner_phone"/></td>
-                            </tr>
-                        </table>
-                    </div>
-
-                    <!-- Datos del producto SOAP -->
-                    <t t-if="is_soap">
-                        <div style="background: #f8f9fa; border-left: 4px solid #2E7D32; padding: 12px 16px; margin-bottom: 18px;">
-                            <div style="font-weight: bold; color: #2E7D32; margin-bottom: 8px; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Datos del Vehículo</div>
-                            <table width="100%" style="font-size: 13px;">
-                                <tr>
-                                    <td width="40%" style="color: #555; padding: 3px 0;">Patente</td>
-                                    <td><strong><t t-esc="pd.get('vehicle_plate', '—')"/></strong></td>
-                                </tr>
-                                <tr>
-                                    <td style="color: #555; padding: 3px 0;">Año</td>
-                                    <td><t t-esc="pd.get('vehicle_year', '—')"/></td>
-                                </tr>
-                                <tr>
-                                    <td style="color: #555; padding: 3px 0;">Tipo de vehículo</td>
-                                    <td><t t-esc="str(pd.get('vehicle_type', '—')).capitalize()"/></td>
-                                </tr>
-                            </table>
-                        </div>
-
-                        <!-- Prima -->
-                        <div style="background: #fff3cd; border: 1px solid #C1002B; border-radius: 6px; padding: 14px 18px; margin-bottom: 24px; display: flex; justify-content: space-between;">
-                            <div style="font-size: 12px; color: #C1002B; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Prima Anual a Pagar</div>
-                            <div style="font-size: 24px; font-weight: bold; color: #2E7D32;">
-                                $<t t-esc="'{:,.0f}'.format(calc.get('premium', 0)).replace(',', '.')"/> CLP
                             </div>
-                        </div>
+                        </t>
                     </t>
-
-                    <!-- Datos del depósito -->
-                    <t t-if="not is_soap">
-                        <div style="background: #f8f9fa; border-left: 4px solid #2E7D32; padding: 12px 16px; margin-bottom: 18px;">
-                            <div style="font-weight: bold; color: #2E7D32; margin-bottom: 8px; text-transform: uppercase; font-size: 11px; letter-spacing: 0.5px;">Datos del Depósito</div>
-                            <table width="100%" style="font-size: 13px;">
-                                <tr>
-                                    <td width="40%" style="color: #555; padding: 3px 0;">Monto depositado</td>
-                                    <td><strong>$<t t-esc="'{:,.0f}'.format(pd.get('amount', 0)).replace(',', '.')"/> CLP</strong></td>
-                                </tr>
-                                <tr>
-                                    <td style="color: #555; padding: 3px 0;">Plazo</td>
-                                    <td><t t-esc="pd.get('term_days', '—')"/> días</td>
-                                </tr>
-                            </table>
-                        </div>
-
-                        <div style="background: #fff3cd; border: 1px solid #C1002B; border-radius: 6px; padding: 14px 18px; margin-bottom: 24px; display: flex; justify-content: space-between;">
-                            <div style="font-size: 12px; color: #C1002B; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px;">Intereses Estimados</div>
-                            <div style="font-size: 24px; font-weight: bold; color: #2E7D32;">
-                                $<t t-esc="'{:,.0f}'.format(calc.get('interest', 0)).replace(',', '.')"/> CLP
-                            </div>
-                        </div>
-                    </t>
-
-                    <!-- Cláusulas -->
-                    <div style="font-size: 11px; color: #555; margin-bottom: 24px; line-height: 1.6;">
-                        <p><strong>CLÁUSULAS:</strong></p>
-                        <p>1. El presente contrato es de carácter académico y los valores indicados son ficticios con fines educativos únicamente.</p>
-                        <p>2. El cliente declara que los datos proporcionados son verídicos y acepta las condiciones del producto contratado.</p>
-                        <p>3. Banco UMayor se reserva el derecho de modificar las tarifas en contratos futuros.</p>
-                        <p>4. Este documento fue generado automáticamente por el Asistente Virtual de Banco UMayor el <t t-esc="doc.create_date and doc.create_date.strftime('%d de %B de %Y') or ''"/>.</p>
-                    </div>
-
-                    <!-- Firma -->
-                    <table width="100%" style="margin-top: 40px; font-size: 12px;">
-                        <tr>
-                            <td width="45%" style="text-align: center; border-top: 1px solid #333; padding-top: 6px;">
-                                Firma del Cliente<br/>
-                                <t t-esc="doc.partner_name"/><br/>
-                                RUT: <t t-esc="doc.partner_vat"/>
-                            </td>
-                            <td width="10%"/>
-                            <td width="45%" style="text-align: center; border-top: 1px solid #333; padding-top: 6px;">
-                                Banco UMayor<br/>
-                                Representante Autorizado<br/>
-                                &#160;
-                            </td>
-                        </tr>
-                    </table>
-
-                </div>
+                </t>
             </t>
-        </t>
-    </template>
+        </field>
+    </record>
 
-    <report
-        id="action_report_contract"
-        model="chat_umayor.contract"
-        string="Contrato UMayor"
-        name="chat_umayor.report_contract_document"
-        file="chat_umayor.report_contract_document"
-        report_type="qweb-pdf"
-    />
+    <!-- Acción del reporte -->
+    <record id="action_report_contract" model="ir.actions.report">
+        <field name="name">Contrato UMayor</field>
+        <field name="model">chat_umayor.contract</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">chat_umayor.report_contract_document</field>
+        <field name="report_file">chat_umayor.report_contract_document</field>
+    </record>
 
-</data>
 </odoo>
