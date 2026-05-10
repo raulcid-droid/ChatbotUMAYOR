@@ -4,6 +4,7 @@
     <!-- Vista QWeb del reporte (ir.ui.view) -->
     <record id="report_contract_view" model="ir.ui.view">
         <field name="name">report.chat_umayor.contract</field>
+        <field name="key">chat_umayor.report_contract_document</field>
         <field name="type">qweb</field>
         <field name="arch" type="xml">
             <t t-name="chat_umayor.report_contract_document">
