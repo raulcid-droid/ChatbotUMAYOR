@@ -450,13 +450,18 @@ class ChatUmayorController(Controller):
         if err:
             return err
 
-        # Estado: solo data_collection procesa.
+        # Estado: solo data_collection (o product_info como transición implícita).
         if session.state == "review":
             return _err(
                 "INVALID_STATE",
                 "Los datos ya fueron enviados. Continúa con la firma.",
             )
-        if session.state != "data_collection":
+        if session.state == "product_info":
+            # El bot mostró el formulario antes de que el FSM avanzara
+            # (keyword no cubierto). El llenado del form es confirmación
+            # implícita: avanzamos a data_collection aquí.
+            session._do_transition("data_collection")
+        elif session.state != "data_collection":
             return _err(
                 "INVALID_STATE",
                 "La sesión no está lista para recibir datos del formulario.",
