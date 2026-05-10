@@ -20,7 +20,7 @@
                                 <table width="100%" style="margin-bottom: 24px;">
                                     <tr>
                                         <td>
-                                            <div style="color: #C1002B; font-size: 22px; font-weight: bold;">Banco UMayor</div>
+                                            <img src="/chat_umayor/static/src/logo_umayor.png" alt="Banco UMayor" style="height: 48px; display: block; margin-bottom: 4px;"/>
                                             <div style="color: #777; font-size: 10px;">Proyecto académico — valores ficticios</div>
                                         </td>
                                         <td style="text-align: right;">
