@@ -3,7 +3,7 @@
     <data noupdate="0">
         <function model="ir.config_parameter" name="set_param">
             <value>chat_umayor.gemini_model</value>
-            <value>gemini-2.0-flash</value>
+            <value>gemini-2.5-flash</value>
         </function>
     </data>
 </odoo>

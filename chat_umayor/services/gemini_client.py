@@ -12,7 +12,7 @@ lugar para que:
 Configuración (§7 AGENTS local). Se lee de ``ir.config_parameter``:
 
     chat_umayor.gemini_api_key          (fallback a env GEMINI_API_KEY)
-    chat_umayor.gemini_model            (default: gemini-2.0-flash)
+    chat_umayor.gemini_model            (default: gemini-2.5-flash)
     chat_umayor.system_prompt           (obligatorio; carga via data XML)
     chat_umayor.gemini_timeout_seconds  (default: 15)
 
@@ -42,7 +42,7 @@ _logger = logging.getLogger(__name__)
 # Constantes
 # ---------------------------------------------------------------------
 
-_DEFAULT_MODEL = "gemini-2.0-flash"
+_DEFAULT_MODEL = "gemini-2.5-flash"
 _DEFAULT_TIMEOUT_SECONDS = 15
 _MAX_RETRIES = 3
 _BASE_BACKOFF_SECONDS = 0.5
