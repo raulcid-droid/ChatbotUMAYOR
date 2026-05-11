@@ -456,10 +456,12 @@ class ChatUmayorController(Controller):
                 "INVALID_STATE",
                 "Los datos ya fueron enviados. Continúa con la firma.",
             )
-        if session.state == "product_info":
-            # El bot mostró el formulario antes de que el FSM avanzara
-            # (keyword no cubierto). El llenado del form es confirmación
-            # implícita: avanzamos a data_collection aquí.
+        if session.state in ("product_info", "discovery"):
+            # El bot mostró el formulario antes de que el FSM avanzara.
+            # El llenado del form es confirmación implícita del producto;
+            # avanzamos directo a data_collection.
+            if session.state == "discovery":
+                session._do_transition("product_info")
             session._do_transition("data_collection")
         elif session.state != "data_collection":
             return _err(

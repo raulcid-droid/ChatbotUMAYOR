@@ -183,14 +183,13 @@
       if (data.state === "data_collection") {
         renderDataForm(data.product_code || detectProduct(data.reply));
       } else if (
-        data.state !== "review" &&
-        data.state !== "signing" &&
-        data.state !== "closed" &&
+        data.state === "product_info" &&
         /formulario|tus datos/i.test(data.reply || "")
       ) {
-        // Red de seguridad: Gemini dice "formulario" pero el FSM aún
-        // no avanzó (keyword no cubierto). El backend avanzará en el
-        // próximo mensaje del usuario o cuando el submit tenga éxito.
+        // Red de seguridad: Gemini dice "formulario" desde product_info
+        // pero el keyword no cubrió la confirmación. Solo se activa
+        // desde product_info (no discovery/greeting) para evitar que
+        // el form aparezca antes de que el usuario haya elegido producto.
         sessionState.currentState = "data_collection";
         renderDataForm(data.product_code || detectProduct(data.reply));
       }
