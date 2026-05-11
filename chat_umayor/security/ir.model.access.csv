@@ -1,7 +1,12 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_chatbot_session_user,chatbot.session user,model_chatbot_session,base.group_user,1,1,1,1
+access_chatbot_session_public,chatbot.session public,model_chatbot_session,base.group_public,1,1,1,0
 access_chatbot_message_user,chatbot.message user,model_chatbot_message,base.group_user,1,1,1,1
+access_chatbot_message_public,chatbot.message public,model_chatbot_message,base.group_public,1,1,1,0
 access_chat_umayor_product_soap_user,chat_umayor.product.soap user,model_chat_umayor_product_soap,base.group_user,1,1,1,1
+access_chat_umayor_product_soap_public,chat_umayor.product.soap public,model_chat_umayor_product_soap,base.group_public,1,0,0,0
 access_chat_umayor_product_deposit_user,chat_umayor.product.deposit user,model_chat_umayor_product_deposit,base.group_user,1,1,1,1
+access_chat_umayor_product_deposit_public,chat_umayor.product.deposit public,model_chat_umayor_product_deposit,base.group_public,1,0,0,0
 access_chat_umayor_contract_user,chat_umayor.contract user,model_chat_umayor_contract,base.group_user,1,1,1,1
+access_chat_umayor_contract_public,chat_umayor.contract public,model_chat_umayor_contract,base.group_public,1,1,1,0
 access_chat_umayor_config_admin,chat.umayor.config admin,model_chat_umayor_config,base.group_system,1,1,1,1
