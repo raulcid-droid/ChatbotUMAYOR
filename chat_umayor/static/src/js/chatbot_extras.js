@@ -183,13 +183,12 @@
       if (data.state === "data_collection") {
         renderDataForm(data.product_code || detectProduct(data.reply));
       } else if (
-        data.state === "product_info" &&
+        (data.state === "product_info" || data.state === "discovery") &&
         /formulario|tus datos/i.test(data.reply || "")
       ) {
-        // Red de seguridad: Gemini dice "formulario" desde product_info
-        // pero el keyword no cubrió la confirmación. Solo se activa
-        // desde product_info (no discovery/greeting) para evitar que
-        // el form aparezca antes de que el usuario haya elegido producto.
+        // Red de seguridad: Gemini dice "formulario" pero el FSM no
+        // avanzó (quedó en product_info o discovery). El backend ya
+        // acepta submit_data desde discovery/product_info.
         sessionState.currentState = "data_collection";
         renderDataForm(data.product_code || detectProduct(data.reply));
       }
@@ -749,9 +748,15 @@
       btn.textContent = "Descargando...";
     }
 
-    // Abre el PDF directamente — el navegador lo descarga
+    // Descarga el PDF sin window.open (evita bloqueo de popups)
     const pdfUrl = `/chat_umayor/session/${sessionState.sessionId}/contrato.pdf`;
-    window.open(pdfUrl, "_blank", "noopener");
+    const a = document.createElement("a");
+    a.href = pdfUrl;
+    a.download = "contrato.pdf";
+    a.style.display = "none";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 
     appendMessage("✓ Tu contrato PDF se está descargando. ¡Gracias por contratar con Banco UMayor!", "bot");
     unlockChatInput();
